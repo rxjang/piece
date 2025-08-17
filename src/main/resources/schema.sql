@@ -1,0 +1,17 @@
+-- unit_code 테이블 생성
+CREATE TABLE IF NOT EXISTS unit_code (
+     id INT AUTO_INCREMENT PRIMARY KEY,
+     unit_code VARCHAR(20) NOT NULL UNIQUE,
+    name VARCHAR(500) NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+-- problem 테이블 생성
+CREATE TABLE IF NOT EXISTS problem (
+   id INT AUTO_INCREMENT PRIMARY KEY,
+   unit_code VARCHAR(20) NOT NULL,
+    level INT NOT NULL,
+    problem_type VARCHAR(20) NOT NULL,
+    answer VARCHAR(1000) NOT NULL,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
