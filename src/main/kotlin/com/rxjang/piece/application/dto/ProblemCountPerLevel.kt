@@ -9,8 +9,5 @@ data class ProblemCountPerLevel(
     val highCount: Int
 ) {
 
-    // TODO queryDsl 적용 후 제거, jpql 반환용
-    constructor(lowCount: Long, mediumCount: Long, highCount: Long) : this(lowCount.toInt(), mediumCount.toInt(), highCount.toInt())
-
     val total = lowCount + mediumCount + highCount
 }

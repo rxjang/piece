@@ -8,7 +8,6 @@ import com.rxjang.piece.domain.problem.model.ProblemType
 import com.rxjang.piece.domain.problem.reader.ProblemReader
 import com.rxjang.piece.infrastructure.persistance.mapper.ProblemMapper.toModel
 import com.rxjang.piece.infrastructure.persistance.repository.ProblemRepository
-import org.springframework.data.domain.PageRequest
 import org.springframework.stereotype.Repository
 
 @Repository
@@ -22,14 +21,14 @@ class ProblemReaderImpl(
 
     override fun searchProblems(query: SearchProblemQuery, calculatedCount: ProblemCountPerLevel): List<Problem> {
         return ProblemLevel.entries.flatMap {
-            val pageSize = when (it) {
+            val requestCount = when (it) {
                 ProblemLevel.LOW -> calculatedCount.lowCount
                 ProblemLevel.MEDIUM -> calculatedCount.mediumCount
                 ProblemLevel.HIGH -> calculatedCount.highCount
             }
-            if (pageSize == 0) return@flatMap emptyList()
+            if (requestCount == 0) return@flatMap emptyList()
             problemRepository
-                .searchProblems(query.unitCodes, query.problemType, it.valueRange.toList(), PageRequest.of(0 , pageSize))
+                .searchProblems(query.unitCodes, query.problemType, it.valueRange.toList(), requestCount)
                 .map { problem -> problem.toModel() }
         }
     }
