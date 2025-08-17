@@ -339,3 +339,8 @@ INSERT INTO problem (id, unit_code, level, problem_type, answer) VALUES (1522, '
 INSERT INTO problem (id, unit_code, level, problem_type, answer) VALUES (1523, 'uc1571', 3, 'SUBJECTIVE', '4');
 INSERT INTO problem (id, unit_code, level, problem_type, answer) VALUES (1526, 'uc1571', 2, 'SUBJECTIVE', '1');
 INSERT INTO problem (id, unit_code, level, problem_type, answer) VALUES (1531, 'uc1548', 3, 'SELECTION', '2');
+
+INSERT INTO piece(title, user_id) VALUES ('수학 1', 1);
+INSERT INTO piece_problem(piece_id, problem_id, problem_order) VALUES (1, 1362, 1);
+INSERT INTO piece_problem(piece_id, problem_id, problem_order) VALUES (1, 1007, 2);
+INSERT INTO piece_problem(piece_id, problem_id, problem_order) VALUES (1, 1008, 3);

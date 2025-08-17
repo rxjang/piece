@@ -1,7 +1,8 @@
 package com.rxjang.piece.application
 
-import com.rxjang.piece.application.dto.ProblemCountPerLevel
-import com.rxjang.piece.application.dto.SearchProblemQuery
+import com.rxjang.piece.domain.problem.dto.ProblemCountPerLevel
+import com.rxjang.piece.domain.problem.service.ProblemLevelCountCalculator
+import com.rxjang.piece.domain.problem.query.SearchProblemQuery
 import com.rxjang.piece.domain.problem.model.ProblemLevel
 import com.rxjang.piece.domain.problem.model.ProblemType
 import org.assertj.core.api.Assertions.assertThat

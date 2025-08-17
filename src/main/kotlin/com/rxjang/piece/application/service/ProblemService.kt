@@ -1,6 +1,7 @@
-package com.rxjang.piece.application
+package com.rxjang.piece.application.service
 
-import com.rxjang.piece.application.dto.SearchProblemQuery
+import com.rxjang.piece.domain.problem.service.ProblemLevelCountCalculator
+import com.rxjang.piece.domain.problem.query.SearchProblemQuery
 import com.rxjang.piece.domain.problem.model.Problem
 import com.rxjang.piece.domain.problem.reader.ProblemReader
 import io.github.oshai.kotlinlogging.KotlinLogging

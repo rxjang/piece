@@ -1,11 +1,14 @@
-package com.rxjang.piece.application.piece
+package com.rxjang.piece.application.service
 
-import com.rxjang.piece.application.piece.dto.ChangeProblemOrderFailure
-import com.rxjang.piece.application.piece.dto.ChangeProblemOrderResult
-import com.rxjang.piece.application.piece.dto.ChangeProblemOrderSuccess
-import com.rxjang.piece.application.piece.dto.CreatePieceFailure
-import com.rxjang.piece.application.piece.dto.CreatePieceResult
-import com.rxjang.piece.application.piece.dto.CreatePieceSuccess
+import com.rxjang.piece.application.common.PieceFailureCode
+import com.rxjang.piece.application.dto.AssignPieceResult
+import com.rxjang.piece.application.dto.ChangeProblemOrderFailure
+import com.rxjang.piece.application.dto.ChangeProblemOrderResult
+import com.rxjang.piece.application.dto.ChangeProblemOrderSuccess
+import com.rxjang.piece.application.dto.CreatePieceFailure
+import com.rxjang.piece.application.dto.CreatePieceResult
+import com.rxjang.piece.application.dto.CreatePieceSuccess
+import com.rxjang.piece.domain.piece.command.AssignPieceCommand
 import com.rxjang.piece.domain.piece.command.ChangeProblemOrderCommand
 import com.rxjang.piece.domain.piece.command.CreatePieceCommand
 import com.rxjang.piece.domain.piece.reader.PieceReader
@@ -53,5 +56,22 @@ class PieceService(
         }
         val updated = pieceStore.changeProblemOrder(command)
         return ChangeProblemOrderSuccess(piece.copy(problemIds = updated))
+    }
+
+    @Transactional
+    fun assignPieceToStudent(command: AssignPieceCommand): AssignPieceResult {
+        // 기존 학습지 가져오기
+        val piece = pieceReader.findById(command.pieceId) ?: return AssignPieceResult.Failure(PieceFailureCode.PIECE_NOT_FOUND)
+        if (piece.teacherId != command.teacherId) {
+            return AssignPieceResult.Failure(PieceFailureCode.NOT_OWN_PIECE)
+        }
+        // 기 출제된 학생 제외
+        val alreadyAssignedStudents = pieceReader.findAlreadyAssignedStudents(command)
+        if (alreadyAssignedStudents.size == command.studentIds.size) {
+            return AssignPieceResult.Success(emptyList())
+        }
+        // 나머지 학생들에게 학습지 출제
+        val assignments = pieceStore.assignToStudent(command.copy(studentIds = command.studentIds - alreadyAssignedStudents))
+        return AssignPieceResult.Success(assignments)
     }
 }

@@ -25,10 +25,20 @@ CREATE TABLE IF NOT EXISTS piece (
 );
 
 -- piece_problem 테이블 생성
+-- TODO piece_id & problem_id 로 pk 사용 고려
 CREATE TABLE IF NOT EXISTS piece_problem (
    id INT AUTO_INCREMENT PRIMARY KEY,
    piece_id INT NOT NULL,
    problem_id INT NOT NULL,
    problem_order INT NOT NULL,
    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+-- piece_assignment 테이블 생성
+CREATE TABLE IF NOT EXISTS piece_assignment (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    piece_id INT NOT NULL,
+    student_id INT NOT NULL,
+    status ENUM('ASSIGNED', 'COMPLETED') DEFAULT 'ASSIGNED',
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );

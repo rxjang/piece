@@ -1,4 +1,4 @@
-package com.rxjang.piece.application.common.dto
+package com.rxjang.piece.application.common
 
 interface FailureCode {
     val code: String

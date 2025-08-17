@@ -1,6 +1,6 @@
-package com.rxjang.piece.application.piece.dto
+package com.rxjang.piece.application.dto
 
-import com.rxjang.piece.application.piece.PieceFailureCode
+import com.rxjang.piece.application.common.PieceFailureCode
 import com.rxjang.piece.domain.piece.model.Piece
 
 sealed class CreatePieceResult

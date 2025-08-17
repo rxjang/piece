@@ -1,6 +1,6 @@
 package com.rxjang.piece.presentation.exception
 
-import com.rxjang.piece.application.common.dto.FailureCode
+import com.rxjang.piece.application.common.FailureCode
 
 class BusinessException(
     val errorCode: String,

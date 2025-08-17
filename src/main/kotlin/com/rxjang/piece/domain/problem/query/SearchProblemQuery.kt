@@ -1,5 +1,6 @@
-package com.rxjang.piece.application.dto
+package com.rxjang.piece.domain.problem.query
 
+import com.rxjang.piece.domain.problem.dto.ProblemCountPerLevel
 import com.rxjang.piece.domain.problem.model.ProblemLevel
 import com.rxjang.piece.domain.problem.model.ProblemType
 

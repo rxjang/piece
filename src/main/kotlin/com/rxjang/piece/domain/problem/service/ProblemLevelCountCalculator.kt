@@ -1,8 +1,8 @@
-package com.rxjang.piece.application
+package com.rxjang.piece.domain.problem.service
 
-import com.rxjang.piece.application.dto.ProblemCountPerLevel
-import com.rxjang.piece.application.dto.SearchProblemQuery
+import com.rxjang.piece.domain.problem.dto.ProblemCountPerLevel
 import com.rxjang.piece.domain.problem.model.ProblemLevel
+import com.rxjang.piece.domain.problem.query.SearchProblemQuery
 import org.springframework.stereotype.Component
 
 @Component

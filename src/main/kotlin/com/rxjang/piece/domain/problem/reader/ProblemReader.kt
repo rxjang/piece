@@ -1,7 +1,7 @@
 package com.rxjang.piece.domain.problem.reader
 
-import com.rxjang.piece.application.dto.ProblemCountPerLevel
-import com.rxjang.piece.application.dto.SearchProblemQuery
+import com.rxjang.piece.domain.problem.dto.ProblemCountPerLevel
+import com.rxjang.piece.domain.problem.query.SearchProblemQuery
 import com.rxjang.piece.domain.problem.model.Problem
 import com.rxjang.piece.domain.problem.model.ProblemId
 import com.rxjang.piece.domain.problem.model.ProblemType

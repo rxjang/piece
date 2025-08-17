@@ -1,7 +1,7 @@
 package com.rxjang.piece.presentation.problem
 
-import com.rxjang.piece.application.ProblemService
-import com.rxjang.piece.application.dto.SearchProblemQuery
+import com.rxjang.piece.application.service.ProblemService
+import com.rxjang.piece.domain.problem.query.SearchProblemQuery
 import com.rxjang.piece.domain.problem.model.ProblemLevel
 import com.rxjang.piece.presentation.problem.dto.request.ProblemRequestType
 import com.rxjang.piece.presentation.problem.converter.ProblemConverter.toResponse

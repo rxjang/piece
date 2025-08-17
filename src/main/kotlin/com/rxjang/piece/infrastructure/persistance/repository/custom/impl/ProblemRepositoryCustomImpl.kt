@@ -3,7 +3,7 @@ package com.rxjang.piece.infrastructure.persistance.repository.custom.impl
 import com.querydsl.core.types.dsl.CaseBuilder
 import com.querydsl.core.types.dsl.Expressions.nullExpression
 import com.querydsl.jpa.impl.JPAQueryFactory
-import com.rxjang.piece.application.dto.ProblemCountPerLevel
+import com.rxjang.piece.domain.problem.dto.ProblemCountPerLevel
 import com.rxjang.piece.domain.problem.model.ProblemType
 import com.rxjang.piece.infrastructure.persistance.entity.ProblemEntity
 import com.rxjang.piece.infrastructure.persistance.entity.QProblemEntity.problemEntity

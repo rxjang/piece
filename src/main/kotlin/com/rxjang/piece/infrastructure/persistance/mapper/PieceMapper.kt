@@ -1,9 +1,13 @@
 package com.rxjang.piece.infrastructure.persistance.mapper
 
 import com.rxjang.piece.domain.piece.model.Piece
+import com.rxjang.piece.domain.piece.model.PieceAssignment
+import com.rxjang.piece.domain.piece.model.PieceAssignmentId
 import com.rxjang.piece.domain.piece.model.PieceId
 import com.rxjang.piece.domain.problem.model.ProblemId
+import com.rxjang.piece.domain.user.model.StudentId
 import com.rxjang.piece.domain.user.model.TeacherId
+import com.rxjang.piece.infrastructure.persistance.entity.PieceAssignmentEntity
 import com.rxjang.piece.infrastructure.persistance.entity.PieceEntity
 
 object PieceMapper {
@@ -12,10 +16,19 @@ object PieceMapper {
         return Piece(
             id = PieceId(this.id!!),
             title = this.title,
-            userId = TeacherId(this.userId),
+            teacherId = TeacherId(this.userId),
             problemIds = if (withProblems) {
                 this.problems.map { ProblemId(it.problemId) }
             } else emptyList()
+        )
+    }
+
+    fun PieceAssignmentEntity.toModel(): PieceAssignment {
+        return PieceAssignment(
+            id = PieceAssignmentId(this.id!!),
+            pieceId = PieceId(this.pieceId),
+            studentId = StudentId(this.studentId),
+            status = this.status
         )
     }
 }

@@ -1,4 +1,4 @@
-package com.rxjang.piece.application.dto
+package com.rxjang.piece.domain.problem.dto
 
 /**
  * 난이도 별 문제 수

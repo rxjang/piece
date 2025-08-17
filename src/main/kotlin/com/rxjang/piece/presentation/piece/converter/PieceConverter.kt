@@ -1,12 +1,15 @@
 package com.rxjang.piece.presentation.piece.converter
 
+import com.rxjang.piece.domain.piece.command.AssignPieceCommand
 import com.rxjang.piece.domain.piece.command.ChangeProblemOrderCommand
 import com.rxjang.piece.domain.piece.command.CreatePieceCommand
 import com.rxjang.piece.domain.piece.command.ProblemOrder as DomainProblemOrder
 import com.rxjang.piece.domain.piece.model.Piece
 import com.rxjang.piece.domain.piece.model.PieceId
 import com.rxjang.piece.domain.problem.model.ProblemId
+import com.rxjang.piece.domain.user.model.StudentId
 import com.rxjang.piece.domain.user.model.TeacherId
+import com.rxjang.piece.presentation.piece.dto.request.AssignPieceToStudentRequest
 import com.rxjang.piece.presentation.piece.dto.request.ChangeProblemOrderInPieceRequest
 import com.rxjang.piece.presentation.piece.dto.request.CreatePieceRequest
 import com.rxjang.piece.presentation.piece.dto.request.ProblemOrder
@@ -44,6 +47,14 @@ object PieceConverter {
                     order = index + 1,
                 )
             }
+        )
+    }
+
+    fun AssignPieceToStudentRequest.toCommand(pieceId: Int): AssignPieceCommand {
+        return AssignPieceCommand(
+            teacherId = TeacherId(this.teacherId),
+            pieceId = PieceId(pieceId),
+            studentIds = this.studentIds.map { StudentId(it) },
         )
     }
 }
