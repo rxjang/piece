@@ -1,15 +1,22 @@
 package com.rxjang.piece.presentation.piece
 
 import com.rxjang.piece.application.piece.PieceService
+import com.rxjang.piece.application.piece.dto.ChangeProblemOrderFailure
+import com.rxjang.piece.application.piece.dto.ChangeProblemOrderSuccess
 import com.rxjang.piece.application.piece.dto.CreatePieceFailure
 import com.rxjang.piece.application.piece.dto.CreatePieceSuccess
 import com.rxjang.piece.presentation.exception.BusinessException
+import com.rxjang.piece.presentation.piece.converter.PieceConverter.toChangeOrderResponse
 import com.rxjang.piece.presentation.piece.converter.PieceConverter.toCommand
+import com.rxjang.piece.presentation.piece.dto.request.ChangeProblemOrderInPieceRequest
 import com.rxjang.piece.presentation.piece.dto.request.CreatePieceRequest
+import com.rxjang.piece.presentation.piece.dto.response.ChangeProblemOrderInPieceResponse
 import com.rxjang.piece.presentation.piece.dto.response.CreatePieceResponse
 import jakarta.validation.Valid
 import org.springframework.http.ResponseEntity
 import org.springframework.validation.annotation.Validated
+import org.springframework.web.bind.annotation.PatchMapping
+import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
@@ -33,6 +40,20 @@ class PieceController(
                         CreatePieceResponse(result.piece.id.value)
                     )
             is CreatePieceFailure -> throw BusinessException(result.failureCode)
+        }
+    }
+
+    @PatchMapping("/{pieceId}/order")
+    fun changeProblemOrder(
+        @PathVariable pieceId: Int,
+        @RequestBody @Valid request: ChangeProblemOrderInPieceRequest
+    ): ResponseEntity<ChangeProblemOrderInPieceResponse> {
+        val result = pieceService.changeProblemOrder(request.toCommand(pieceId))
+        return when (result) {
+            is ChangeProblemOrderSuccess ->
+                ResponseEntity.ok()
+                    .body(result.piece.toChangeOrderResponse())
+            is ChangeProblemOrderFailure -> throw BusinessException(result.failureCode)
         }
     }
 }

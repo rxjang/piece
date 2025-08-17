@@ -1,9 +1,11 @@
 package com.rxjang.piece.infrastructure.persistance.store
 
+import com.rxjang.piece.domain.piece.command.ChangeProblemOrderCommand
 import com.rxjang.piece.domain.piece.command.CreatePieceCommand
 import com.rxjang.piece.domain.piece.model.Piece
 import com.rxjang.piece.domain.piece.model.PieceId
 import com.rxjang.piece.domain.piece.store.PieceStore
+import com.rxjang.piece.domain.problem.model.ProblemId
 import com.rxjang.piece.infrastructure.persistance.entity.PieceEntity
 import com.rxjang.piece.infrastructure.persistance.entity.PieceProblemEntity
 import com.rxjang.piece.infrastructure.persistance.repository.PieceProblemRepository
@@ -38,5 +40,20 @@ class PieceStoreImpl(
             userId = command.teacherId,
             problemIds = command.problemIds.toList()
         )
+    }
+
+    override fun changeProblemOrder(command: ChangeProblemOrderCommand): List<ProblemId> {
+        // 대상 확인
+        val pieceProblems = pieceProblemRepository.findByPieceIdAndProblemIdIn(
+            pieceId = command.pieceId.value,
+            problemIds= command.problemOrders.map { it.problemId.value })
+        // 순서 변경
+        val changed = command.problemOrders.map {
+            val target = pieceProblems.first { pieceProblem -> pieceProblem.problemId == it.problemId.value }
+            target.changeOrder(it.order)
+        }
+        // 저장
+        val updated = pieceProblemRepository.saveAll(changed)
+        return updated.sortedBy { it.order }.map { ProblemId(it.problemId) }
     }
 }

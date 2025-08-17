@@ -33,6 +33,6 @@ spring:
         - classpath:sql/data.sql
       continue-on-error: false
 
-  logging:
-    level:
-      com.rxjang: debug
+logging:
+  level:
+    com.rxjang: debug

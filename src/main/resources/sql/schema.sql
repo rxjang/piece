@@ -28,7 +28,7 @@ CREATE TABLE IF NOT EXISTS piece (
 CREATE TABLE IF NOT EXISTS piece_problem (
    id INT AUTO_INCREMENT PRIMARY KEY,
    piece_id INT NOT NULL,
-   piece_problem_id INT NOT NULL,
+   problem_id INT NOT NULL,
    problem_order INT NOT NULL,
    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );

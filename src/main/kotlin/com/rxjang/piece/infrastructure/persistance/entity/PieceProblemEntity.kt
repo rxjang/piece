@@ -30,7 +30,7 @@ class PieceProblemEntity(
     var pieceId: Int = pieceId
         protected set
 
-    @Column(name = "piece_problem_id", nullable = false)
+    @Column(name = "problem_id", nullable = false)
     var problemId: Int = problemId
         protected set
 
@@ -51,5 +51,10 @@ class PieceProblemEntity(
     @JoinColumn(name = "problem_id", updatable = false, insertable = false)
     var problem: ProblemEntity? = null
         protected set
+
+    fun changeOrder(order: Int): PieceProblemEntity {
+        this.order = order
+        return this
+    }
 
 }

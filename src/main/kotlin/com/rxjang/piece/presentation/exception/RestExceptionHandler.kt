@@ -18,7 +18,7 @@ class RestExceptionHandler(
 
     @ExceptionHandler(Exception::class)
     fun exceptionHandler(e: Exception): ResponseEntity<RestExceptionResponse> {
-        logger.error { e }
+        logger.error(e) { "예외 발생: ${e.message}" }
         val httpStatus = getHttpStatus(e)
         return ResponseEntity(getRestResponse(httpStatus, e), httpStatus)
     }

@@ -3,14 +3,12 @@ package com.rxjang.piece.application.piece.dto
 import com.rxjang.piece.application.piece.PieceFailureCode
 import com.rxjang.piece.domain.piece.model.Piece
 
-sealed class CreatePieceResult
+sealed class ChangeProblemOrderResult
 
-data class CreatePieceSuccess(
+data class ChangeProblemOrderSuccess(
     val piece: Piece,
-): CreatePieceResult()
+): ChangeProblemOrderResult()
 
-data class CreatePieceFailure(
+data class ChangeProblemOrderFailure(
     val failureCode: PieceFailureCode,
-): CreatePieceResult() {
-
-}
+): ChangeProblemOrderResult()
