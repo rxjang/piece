@@ -3,9 +3,8 @@ package com.rxjang.piece.presentation.problem
 import com.rxjang.piece.application.ProblemService
 import com.rxjang.piece.application.dto.SearchProblemQuery
 import com.rxjang.piece.domain.problem.model.ProblemLevel
-import com.rxjang.piece.domain.problem.model.ProblemType
 import com.rxjang.piece.presentation.problem.dto.request.ProblemRequestType
-import com.rxjang.piece.presentation.problem.mapper.ProblemConverter.toResponse
+import com.rxjang.piece.presentation.problem.converter.ProblemConverter.toResponse
 import com.rxjang.piece.presentation.problem.dto.response.SearchProblemResponse
 import jakarta.validation.constraints.Min
 import jakarta.validation.constraints.NotEmpty

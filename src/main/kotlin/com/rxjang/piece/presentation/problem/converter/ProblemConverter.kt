@@ -1,4 +1,4 @@
-package com.rxjang.piece.presentation.problem.mapper
+package com.rxjang.piece.presentation.problem.converter
 
 import com.rxjang.piece.domain.problem.model.Problem
 import com.rxjang.piece.presentation.problem.dto.response.ProblemResponse

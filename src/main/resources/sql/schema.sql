@@ -15,3 +15,20 @@ CREATE TABLE IF NOT EXISTS problem (
     answer VARCHAR(1000) NOT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
+
+-- piece 테이블 생성
+CREATE TABLE IF NOT EXISTS piece (
+   id INT AUTO_INCREMENT PRIMARY KEY,
+   user_id INT NOT NULL,
+   title VARCHAR(100) NOT NULL,
+   created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+-- piece_problem 테이블 생성
+CREATE TABLE IF NOT EXISTS piece_problem (
+   id INT AUTO_INCREMENT PRIMARY KEY,
+   piece_id INT NOT NULL,
+   piece_problem_id INT NOT NULL,
+   problem_order INT NOT NULL,
+   created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);

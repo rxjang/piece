@@ -3,6 +3,7 @@ package com.rxjang.piece.infrastructure.persistance.reader
 import com.rxjang.piece.application.dto.ProblemCountPerLevel
 import com.rxjang.piece.application.dto.SearchProblemQuery
 import com.rxjang.piece.domain.problem.model.Problem
+import com.rxjang.piece.domain.problem.model.ProblemId
 import com.rxjang.piece.domain.problem.model.ProblemLevel
 import com.rxjang.piece.domain.problem.model.ProblemType
 import com.rxjang.piece.domain.problem.reader.ProblemReader
@@ -14,6 +15,11 @@ import org.springframework.stereotype.Repository
 class ProblemReaderImpl(
     private val problemRepository: ProblemRepository,
 ): ProblemReader {
+
+    override fun getOrderedProblemsByIds(problemIds: List<ProblemId>): List<Problem> {
+        return problemRepository.findByIdInOrderByUnitCodeAscLevelAsc(problemIds.map { it.value })
+            .map { it.toModel() }
+    }
 
     override fun countProblemByLevel(unitCodes: List<String>, types: List<ProblemType>): ProblemCountPerLevel {
         return problemRepository.getProblemCountsByLevel(unitCodes, types)

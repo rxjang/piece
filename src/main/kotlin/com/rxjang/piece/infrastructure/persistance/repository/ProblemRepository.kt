@@ -6,4 +6,6 @@ import org.springframework.data.jpa.repository.JpaRepository
 
 interface ProblemRepository: JpaRepository<ProblemEntity, Int>, ProblemRepositoryCustom {
 
+    fun findByIdInOrderByUnitCodeAscLevelAsc(ids: List<Int>): List<ProblemEntity>
+
 }

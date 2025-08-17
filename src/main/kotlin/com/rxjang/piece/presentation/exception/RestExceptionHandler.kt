@@ -23,6 +23,28 @@ class RestExceptionHandler(
         return ResponseEntity(getRestResponse(httpStatus, e), httpStatus)
     }
 
+    @ExceptionHandler(MethodArgumentNotValidException::class)
+    fun handleValidationExceptions(
+        ex: MethodArgumentNotValidException
+    ): ResponseEntity<RestExceptionResponse> {
+        val errors = mutableMapOf<String, String>()
+        ex.bindingResult.fieldErrors.forEach { error ->
+            errors[error.field] = error.defaultMessage ?: "유효하지 않은 값입니다."
+        }
+        return ResponseEntity.badRequest().body(
+            RestExceptionResponse("NOT_VALID", "요청 값을 확인해 주세요.", errors),
+        )
+    }
+
+    @ExceptionHandler(BusinessException::class)
+    fun handleBusinessExceptions(
+        ex: BusinessException
+    ): ResponseEntity<RestExceptionResponse> {
+        return ResponseEntity.badRequest().body(
+            RestExceptionResponse(ex.errorCode, ex.message),
+        )
+    }
+
     private fun getHttpStatus(e: Exception): HttpStatus {
         if (e is IllegalArgumentException || e is MethodArgumentNotValidException || e is ValidationException) {
             return HttpStatus.BAD_REQUEST
@@ -31,7 +53,7 @@ class RestExceptionHandler(
     }
 
     private fun getRestResponse(httpStatus: HttpStatus, e: Exception): RestExceptionResponse {
-        return RestExceptionResponse(httpStatus.value().toString(), e.message, null)
+        return RestExceptionResponse("UNKNOWN", e.message)
     }
 
 }
