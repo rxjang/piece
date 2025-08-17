@@ -7,13 +7,13 @@ import com.rxjang.piece.domain.problem.model.ProblemType
  * 문제 검색 query
  * @param requestCount 총 요청 문제수
  * @param unitCodes 유형 코드 목록
- * @param problemType 문제 유형
+ * @param problemTypes 문제 유형
  * @param level 난이도
  */
 data class SearchProblemQuery(
     val requestCount: Int,
     val unitCodes: List<String>,
-    val problemType: ProblemType,
+    val problemTypes: List<ProblemType>,
     val level: ProblemLevel,
 ) {
 

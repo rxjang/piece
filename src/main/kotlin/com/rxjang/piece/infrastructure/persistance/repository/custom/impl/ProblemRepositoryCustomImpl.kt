@@ -19,7 +19,7 @@ class ProblemRepositoryCustomImpl(
 
     override fun getProblemCountsByLevel(
         unitCodes: List<String>,
-        type: ProblemType
+        types: List<ProblemType>,
     ): ProblemCountPerLevel {
         val result = queryFactory
             .select(
@@ -40,7 +40,7 @@ class ProblemRepositoryCustomImpl(
             .join(unitCodeEntity).on(problemEntity.unitCode.eq(unitCodeEntity.unitCode))
             .where(
                 problemEntity.unitCode.`in`(unitCodes)
-                    .and(problemEntity.type.eq(type))
+                    .and(problemEntity.type.`in`(types))
             )
             .fetchOne()
 
@@ -53,7 +53,7 @@ class ProblemRepositoryCustomImpl(
 
     override fun searchProblems(
         unitCodes: List<String>,
-        type: ProblemType,
+        types: List<ProblemType>,
         levels: List<Int>,
         requestCount: Int,
     ): List<ProblemEntity> {
@@ -62,7 +62,7 @@ class ProblemRepositoryCustomImpl(
             .join(unitCodeEntity).on(problemEntity.unitCode.eq(unitCodeEntity.unitCode))
             .where(
                 problemEntity.unitCode.`in`(unitCodes)
-                    .and(problemEntity.type.eq(type))
+                    .and(problemEntity.type.`in`(types))
                     .and(problemEntity.level.`in`(levels))
             )
             .orderBy(

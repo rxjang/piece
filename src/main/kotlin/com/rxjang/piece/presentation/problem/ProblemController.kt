@@ -4,8 +4,9 @@ import com.rxjang.piece.application.ProblemService
 import com.rxjang.piece.application.dto.SearchProblemQuery
 import com.rxjang.piece.domain.problem.model.ProblemLevel
 import com.rxjang.piece.domain.problem.model.ProblemType
+import com.rxjang.piece.presentation.problem.dto.request.ProblemRequestType
 import com.rxjang.piece.presentation.problem.mapper.ProblemConverter.toResponse
-import com.rxjang.piece.presentation.problem.response.SearchProblemResponse
+import com.rxjang.piece.presentation.problem.dto.response.SearchProblemResponse
 import jakarta.validation.constraints.Min
 import jakarta.validation.constraints.NotEmpty
 import org.slf4j.LoggerFactory
@@ -36,14 +37,14 @@ class ProblemController(
         @NotEmpty(message = "unitCode는 비어있을 수 없습니다")
         unitCodeList: List<String>,
         @RequestParam level: ProblemLevel,
-        @RequestParam problemType: ProblemType,
+        @RequestParam problemType: ProblemRequestType,
     ): ResponseEntity<SearchProblemResponse> {
 
         return try {
             val searchQuery = SearchProblemQuery(
                 requestCount = totalCount,
                 unitCodes = unitCodeList,
-                problemType = problemType,
+                problemTypes = problemType.toDomainEnum(),
                 level = level
             )
             val result = problemService.searchProblems(searchQuery)

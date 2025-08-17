@@ -7,7 +7,7 @@ import com.rxjang.piece.domain.problem.model.ProblemType
 
 interface ProblemReader {
 
-    fun countProblemByLevel(unitCodes: List<String>, type: ProblemType): ProblemCountPerLevel
+    fun countProblemByLevel(unitCodes: List<String>, types: List<ProblemType>): ProblemCountPerLevel
 
     fun searchProblems(query: SearchProblemQuery, calculatedCount: ProblemCountPerLevel): List<Problem>
 }

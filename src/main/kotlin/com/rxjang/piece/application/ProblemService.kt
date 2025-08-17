@@ -17,7 +17,7 @@ class ProblemService(
 
     @Transactional(readOnly = true)
     fun searchProblems(query: SearchProblemQuery): List<Problem> {
-        val availableProblemCounts = problemReader.countProblemByLevel(query.unitCodes, query.problemType)
+        val availableProblemCounts = problemReader.countProblemByLevel(query.unitCodes, query.problemTypes)
         logger.debug { "[문제 조회] 요청 문제수: ${query.requestCount} 실 가용 문제수: $availableProblemCounts" }
 
         val calculated = problemLevelCountCalculator.calculateAdaptedCounts(query, availableProblemCounts)

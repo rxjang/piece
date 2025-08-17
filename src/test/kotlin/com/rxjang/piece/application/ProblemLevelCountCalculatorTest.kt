@@ -18,7 +18,7 @@ class ProblemLevelCountCalculatorTest {
         val query = SearchProblemQuery(
             requestCount = 10,
             unitCodes = listOf("uc1523"),
-            problemType = ProblemType.SUBJECTIVE,
+            problemTypes = listOf(ProblemType.SUBJECTIVE),
             level = ProblemLevel.HIGH // 상: 하20%, 중30%, 상50%
         )
 
@@ -44,7 +44,7 @@ class ProblemLevelCountCalculatorTest {
         val query = SearchProblemQuery(
             requestCount = 20,
             unitCodes = listOf("uc1521"),
-            problemType = ProblemType.SUBJECTIVE,
+            problemTypes =  listOf(ProblemType.SUBJECTIVE),
             level = ProblemLevel.MEDIUM
         )
 
@@ -70,7 +70,7 @@ class ProblemLevelCountCalculatorTest {
         val query = SearchProblemQuery(
             requestCount = 30,
             unitCodes = listOf("uc1526"),
-            problemType = ProblemType.SUBJECTIVE,
+            problemTypes =  listOf(ProblemType.SUBJECTIVE),
             level = ProblemLevel.LOW  // 하: 하50%, 중30%, 상20%
         )
 
@@ -98,7 +98,7 @@ class ProblemLevelCountCalculatorTest {
         val query = SearchProblemQuery(
             requestCount = 10,
             unitCodes = listOf("uc1537"),
-            problemType = ProblemType.SUBJECTIVE,
+            problemTypes =  listOf(ProblemType.SUBJECTIVE),
             level = ProblemLevel.HIGH
         )
 
@@ -124,7 +124,7 @@ class ProblemLevelCountCalculatorTest {
         val query = SearchProblemQuery(
             requestCount = 20,
             unitCodes = listOf("uc1539"),
-            problemType = ProblemType.SUBJECTIVE,
+            problemTypes =  listOf(ProblemType.SUBJECTIVE),
             level = ProblemLevel.MEDIUM
         )
 
@@ -150,7 +150,7 @@ class ProblemLevelCountCalculatorTest {
         val query = SearchProblemQuery(
             requestCount = 10,
             unitCodes = listOf("uc1540"),
-            problemType = ProblemType.SUBJECTIVE,
+            problemTypes =  listOf(ProblemType.SUBJECTIVE),
             level = ProblemLevel.LOW
         )
 
@@ -178,7 +178,7 @@ class ProblemLevelCountCalculatorTest {
         val query = SearchProblemQuery(
             requestCount = 100,
             unitCodes = listOf("uc1548"),
-            problemType = ProblemType.SUBJECTIVE,
+            problemTypes =  listOf(ProblemType.SUBJECTIVE),
             level = ProblemLevel.HIGH
         )
 
@@ -204,7 +204,7 @@ class ProblemLevelCountCalculatorTest {
         val query = SearchProblemQuery(
             requestCount = 100,
             unitCodes = listOf("uc1570"),
-            problemType = ProblemType.SUBJECTIVE,
+            problemTypes =  listOf(ProblemType.SUBJECTIVE),
             level = ProblemLevel.HIGH
         )
 
@@ -230,7 +230,7 @@ class ProblemLevelCountCalculatorTest {
         val query = SearchProblemQuery(
             requestCount = 10,
             unitCodes = listOf("uc1564"),
-            problemType = ProblemType.SUBJECTIVE,
+            problemTypes =  listOf(ProblemType.SUBJECTIVE),
             level = ProblemLevel.HIGH
         )
 
@@ -256,7 +256,7 @@ class ProblemLevelCountCalculatorTest {
         val query = SearchProblemQuery(
             requestCount = 17,
             unitCodes = listOf("uc1571"),
-            problemType = ProblemType.SUBJECTIVE,
+            problemTypes =  listOf(ProblemType.SUBJECTIVE),
             level = ProblemLevel.MEDIUM
         )
 
@@ -283,7 +283,7 @@ class ProblemLevelCountCalculatorTest {
         val query = SearchProblemQuery(
             requestCount = 10,
             unitCodes = listOf("uc1568"),
-            problemType = ProblemType.SUBJECTIVE,
+            problemTypes =  listOf(ProblemType.SUBJECTIVE),
             level = ProblemLevel.MEDIUM
         )
 
@@ -309,7 +309,7 @@ class ProblemLevelCountCalculatorTest {
         val query = SearchProblemQuery(
             requestCount = 10,
             unitCodes = listOf("uc9999"), // 존재하지 않는 unit
-            problemType = ProblemType.SUBJECTIVE,
+            problemTypes =  listOf(ProblemType.SUBJECTIVE),
             level = ProblemLevel.HIGH
         )
 
@@ -335,7 +335,7 @@ class ProblemLevelCountCalculatorTest {
         val query = SearchProblemQuery(
             requestCount = 1,
             unitCodes = listOf("uc1523"),
-            problemType = ProblemType.SUBJECTIVE,
+            problemTypes =  listOf(ProblemType.SUBJECTIVE),
             level = ProblemLevel.HIGH
         )
 

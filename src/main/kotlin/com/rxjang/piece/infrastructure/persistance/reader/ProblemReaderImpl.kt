@@ -15,8 +15,8 @@ class ProblemReaderImpl(
     private val problemRepository: ProblemRepository,
 ): ProblemReader {
 
-    override fun countProblemByLevel(unitCodes: List<String>, type: ProblemType): ProblemCountPerLevel {
-        return problemRepository.getProblemCountsByLevel(unitCodes, type)
+    override fun countProblemByLevel(unitCodes: List<String>, types: List<ProblemType>): ProblemCountPerLevel {
+        return problemRepository.getProblemCountsByLevel(unitCodes, types)
     }
 
     override fun searchProblems(query: SearchProblemQuery, calculatedCount: ProblemCountPerLevel): List<Problem> {
@@ -28,7 +28,7 @@ class ProblemReaderImpl(
             }
             if (requestCount == 0) return@flatMap emptyList()
             problemRepository
-                .searchProblems(query.unitCodes, query.problemType, it.valueRange.toList(), requestCount)
+                .searchProblems(query.unitCodes, query.problemTypes, it.valueRange.toList(), requestCount)
                 .map { problem -> problem.toModel() }
         }
     }

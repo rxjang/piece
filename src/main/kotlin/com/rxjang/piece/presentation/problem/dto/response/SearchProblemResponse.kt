@@ -1,4 +1,4 @@
-package com.rxjang.piece.presentation.problem.response
+package com.rxjang.piece.presentation.problem.dto.response
 
 import com.rxjang.piece.domain.problem.model.ProblemType
 

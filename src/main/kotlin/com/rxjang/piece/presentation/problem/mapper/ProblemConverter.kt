@@ -1,7 +1,7 @@
 package com.rxjang.piece.presentation.problem.mapper
 
 import com.rxjang.piece.domain.problem.model.Problem
-import com.rxjang.piece.presentation.problem.response.ProblemResponse
+import com.rxjang.piece.presentation.problem.dto.response.ProblemResponse
 
 object ProblemConverter {
 
