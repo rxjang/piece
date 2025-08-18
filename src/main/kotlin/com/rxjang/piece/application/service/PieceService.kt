@@ -8,9 +8,14 @@ import com.rxjang.piece.application.dto.ChangeProblemOrderSuccess
 import com.rxjang.piece.application.dto.CreatePieceFailure
 import com.rxjang.piece.application.dto.CreatePieceResult
 import com.rxjang.piece.application.dto.CreatePieceSuccess
+import com.rxjang.piece.application.dto.SaveScoredAnswerCommand
+import com.rxjang.piece.application.dto.ScorePieceResult
+import com.rxjang.piece.application.dto.UpdatePieceAssignmentCommand
 import com.rxjang.piece.domain.piece.command.AssignPieceCommand
 import com.rxjang.piece.domain.piece.command.ChangeProblemOrderCommand
 import com.rxjang.piece.domain.piece.command.CreatePieceCommand
+import com.rxjang.piece.domain.piece.command.ScorePieceCommand
+import com.rxjang.piece.domain.piece.model.AssignmentStatus
 import com.rxjang.piece.domain.piece.model.PieceId
 import com.rxjang.piece.domain.piece.reader.PieceReader
 import com.rxjang.piece.domain.piece.store.PieceStore
@@ -81,5 +86,68 @@ class PieceService(
         // 나머지 학생들에게 학습지 출제
         val assignments = pieceStore.assignToStudent(command.copy(studentIds = command.studentIds - alreadyAssignedStudents))
         return AssignPieceResult.Success(assignments)
+    }
+
+    @Transactional
+    fun score(command: ScorePieceCommand): ScorePieceResult {
+        // 학생에게 받은 학습지가 맞는지 확인
+        val assignment = pieceReader.findPieceAssignment(command.pieceId, command.studentId)
+            ?: return ScorePieceResult.Failure(PieceFailureCode.ASSIGNMENT_NOT_FOUND)
+
+        // 이미 완료된 학습지인지 확인
+        if (assignment.status == AssignmentStatus.COMPLETED) {
+            return ScorePieceResult.Failure(PieceFailureCode.ALREADY_COMPLETED)
+        }
+
+        // 해당 학습지의 모든 문제 조회
+        val pieceProblems = pieceReader.findProblemsInPieceForStudent(command.pieceId, command.studentId)
+        // 모든 문제가 답변으로 들어왔는지 확인
+        val problemIds = pieceProblems.map { it.id }.toSet()
+        val submittedProblemIds = command.answers.map { it.problemId }.toSet()
+        if (problemIds != submittedProblemIds) {
+            return ScorePieceResult.Failure(PieceFailureCode.ANSWER_MISMATCH)
+        }
+
+        // 답변 비교 및 채점
+        val correctAnswerMap = pieceProblems.associate { problem ->
+            problem.id to problem.answer
+        }
+        val scoringResults = command.answers.map { submission ->
+            val correctAnswer = correctAnswerMap[submission.problemId]
+                ?: throw IllegalStateException("문제를 찾을 수 없습니다: ${submission.problemId}")
+
+            val isCorrect = isAnswerCorrect(submission.answer, correctAnswer)
+            val score = if (isCorrect) 1 else 0
+
+            SaveScoredAnswerCommand(
+                pieceAssignmentId = assignment.id,
+                problemId = submission.problemId,
+                studentAnswer = submission.answer,
+                correctAnswer = correctAnswer,
+                isCorrect = isCorrect,
+                score = score
+            )
+        }
+
+        // 채점 결과 저장
+        pieceStore.saveScoringPieceResult(scoringResults)
+
+        // 채점 결과 및 문제 풀이 완료 저장
+        val totalScore = scoringResults.sumOf { it.score }
+        val updateAssignmentCommand = UpdatePieceAssignmentCommand(
+            pieceAssignmentId = assignment.id,
+            score = totalScore,
+        )
+        pieceStore.updateAssignment(updateAssignmentCommand)
+        // 9. 결과 반환
+        return ScorePieceResult.Success(score = totalScore)
+    }
+
+    /**
+     * 답변 정확성 검사
+     * 추후 더 정교한 로직으로 확장 가능 (유사도 검사, 키워드 매칭 등)
+     */
+    private fun isAnswerCorrect(studentAnswer: String, correctAnswer: String): Boolean {
+        return studentAnswer.trim().lowercase() == correctAnswer.trim().lowercase()
     }
 }

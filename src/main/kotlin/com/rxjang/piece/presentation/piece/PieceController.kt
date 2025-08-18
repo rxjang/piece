@@ -7,6 +7,7 @@ import com.rxjang.piece.application.dto.ChangeProblemOrderFailure
 import com.rxjang.piece.application.dto.ChangeProblemOrderSuccess
 import com.rxjang.piece.application.dto.CreatePieceFailure
 import com.rxjang.piece.application.dto.CreatePieceSuccess
+import com.rxjang.piece.application.dto.ScorePieceResult
 import com.rxjang.piece.application.facade.PieceFacade
 import com.rxjang.piece.domain.piece.model.PieceId
 import com.rxjang.piece.domain.user.model.StudentId
@@ -16,9 +17,11 @@ import com.rxjang.piece.presentation.piece.converter.PieceConverter.toCommand
 import com.rxjang.piece.presentation.piece.dto.request.AssignPieceToStudentRequest
 import com.rxjang.piece.presentation.piece.dto.request.ChangeProblemOrderInPieceRequest
 import com.rxjang.piece.presentation.piece.dto.request.CreatePieceRequest
+import com.rxjang.piece.presentation.piece.dto.request.ScorePieceRequest
 import com.rxjang.piece.presentation.piece.dto.response.AssignPieceToStudentResponse
 import com.rxjang.piece.presentation.piece.dto.response.ChangeProblemOrderInPieceResponse
 import com.rxjang.piece.presentation.piece.dto.response.CreatePieceResponse
+import com.rxjang.piece.presentation.piece.dto.response.ScorePieceResponse
 import com.rxjang.piece.presentation.problem.converter.ProblemConverter.toNoAnswerResponse
 import com.rxjang.piece.presentation.problem.dto.response.ProblemWithNoAnswerResponse
 import jakarta.validation.Valid
@@ -28,6 +31,7 @@ import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PatchMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
@@ -95,6 +99,20 @@ class PieceController(
             throw BusinessException(PieceFailureCode.PIECE_NOT_FOUND)
         } else {
             ResponseEntity.ok().body(problems.map { it.toNoAnswerResponse() })
+        }
+    }
+
+    @PutMapping("/{pieceId}/score")
+    fun scorePiece(
+        @PathVariable pieceId: Int,
+        @RequestBody @Valid request: ScorePieceRequest): ResponseEntity<ScorePieceResponse> {
+        val result = pieceService.score(request.toCommand(pieceId))
+        return when (result) {
+            is ScorePieceResult.Success ->
+                ResponseEntity
+                    .ok()
+                    .body(ScorePieceResponse(result.score))
+            is ScorePieceResult.Failure -> throw BusinessException(result.failureCode)
         }
     }
 }

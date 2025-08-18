@@ -10,4 +10,4 @@ data class PieceAssignment(
 )
 
 @JvmInline
-value class PieceAssignmentId(val id: Int)
+value class PieceAssignmentId(val value: Int)

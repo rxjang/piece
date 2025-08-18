@@ -40,5 +40,18 @@ CREATE TABLE IF NOT EXISTS piece_assignment (
     piece_id INT NOT NULL,
     student_id INT NOT NULL,
     status ENUM('ASSIGNED', 'COMPLETED') DEFAULT 'ASSIGNED',
+    score INT NOT NULL DEFAULT 0,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+
+-- problem_scoring 테이블 생성
+CREATE TABLE IF NOT EXISTS problem_scoring (
+    piece_assignment_id INT NOT NULL,
+    problem_id INT NOT NULL,
+    student_answer VARCHAR(1000) NOT NULL,
+    correct_answer VARCHAR(1000) NOT NULL,
+    is_correct BOOLEAN NOT NULL,
+    score INT NOT NULL DEFAULT 0,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    CONSTRAINT pk_problem_scoring PRIMARY KEY (piece_assignment_id, problem_id)
 );

@@ -1,5 +1,7 @@
 package com.rxjang.piece.infrastructure.persistance.store
 
+import com.rxjang.piece.application.dto.SaveScoredAnswerCommand
+import com.rxjang.piece.application.dto.UpdatePieceAssignmentCommand
 import com.rxjang.piece.domain.piece.command.AssignPieceCommand
 import com.rxjang.piece.domain.piece.command.ChangeProblemOrderCommand
 import com.rxjang.piece.domain.piece.command.CreatePieceCommand
@@ -11,10 +13,13 @@ import com.rxjang.piece.domain.problem.model.ProblemId
 import com.rxjang.piece.infrastructure.persistance.entity.PieceAssignmentEntity
 import com.rxjang.piece.infrastructure.persistance.entity.PieceEntity
 import com.rxjang.piece.infrastructure.persistance.entity.PieceProblemEntity
+import com.rxjang.piece.infrastructure.persistance.entity.ProblemScoringEntity
 import com.rxjang.piece.infrastructure.persistance.mapper.PieceMapper.toModel
 import com.rxjang.piece.infrastructure.persistance.repository.PieceAssignmentRepository
 import com.rxjang.piece.infrastructure.persistance.repository.PieceProblemRepository
 import com.rxjang.piece.infrastructure.persistance.repository.PieceRepository
+import com.rxjang.piece.infrastructure.persistance.repository.ProblemScoreRepository
+import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Repository
 
 @Repository
@@ -22,6 +27,7 @@ class PieceStoreImpl(
     private val pieceRepository: PieceRepository,
     private val pieceProblemRepository: PieceProblemRepository,
     private val pieceAssignmentRepository: PieceAssignmentRepository,
+    private val problemScoreRepository: ProblemScoreRepository,
 ): PieceStore {
 
     override fun createPiece(command: CreatePieceCommand): Piece {
@@ -72,5 +78,26 @@ class PieceStoreImpl(
         }
         val saved = pieceAssignmentRepository.saveAll(entities)
         return saved.map { it.toModel() }
+    }
+
+    override fun saveScoringPieceResult(commands: List<SaveScoredAnswerCommand>) {
+        val entities = commands.map {
+            ProblemScoringEntity(
+                pieceAssignmentId = it.pieceAssignmentId.value,
+                problemId = it.problemId.value,
+                studentAnswer = it.studentAnswer,
+                correctAnswer = it.correctAnswer,
+                isCorrect = it.isCorrect,
+                score= it.score
+            )
+        }
+        problemScoreRepository.saveAll(entities)
+    }
+
+    override fun updateAssignment(command: UpdatePieceAssignmentCommand) {
+        val pieceAssignment = pieceAssignmentRepository.findByIdOrNull(command.pieceAssignmentId.value)
+            ?: throw IllegalArgumentException("Assignment not found")
+        pieceAssignment.updateScore(command.score)
+        pieceAssignmentRepository.save(pieceAssignment)
     }
 }

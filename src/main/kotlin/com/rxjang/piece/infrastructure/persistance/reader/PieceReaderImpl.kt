@@ -2,6 +2,7 @@ package com.rxjang.piece.infrastructure.persistance.reader
 
 import com.rxjang.piece.domain.piece.command.AssignPieceCommand
 import com.rxjang.piece.domain.piece.model.Piece
+import com.rxjang.piece.domain.piece.model.PieceAssignment
 import com.rxjang.piece.domain.piece.model.PieceId
 import com.rxjang.piece.domain.piece.reader.PieceReader
 import com.rxjang.piece.domain.problem.model.Problem
@@ -20,6 +21,13 @@ class PieceReaderImpl(
 
     override fun findById(id: PieceId): Piece? {
         return pieceRepository.findByIdWithProblems(id.value)?.toModel(true)
+    }
+
+    override fun findPieceAssignment(
+        pieceId: PieceId,
+        studentId: StudentId
+    ): PieceAssignment? {
+        return pieceAssignmentRepository.findByPieceIdAndStudentId(pieceId.value, studentId.value)?.toModel()
     }
 
     override fun findProblemsInPieceForStudent(

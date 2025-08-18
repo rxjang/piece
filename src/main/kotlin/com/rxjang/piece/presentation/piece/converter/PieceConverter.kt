@@ -3,6 +3,8 @@ package com.rxjang.piece.presentation.piece.converter
 import com.rxjang.piece.domain.piece.command.AssignPieceCommand
 import com.rxjang.piece.domain.piece.command.ChangeProblemOrderCommand
 import com.rxjang.piece.domain.piece.command.CreatePieceCommand
+import com.rxjang.piece.domain.piece.command.ProblemWithAnswer
+import com.rxjang.piece.domain.piece.command.ScorePieceCommand
 import com.rxjang.piece.domain.piece.command.ProblemOrder as DomainProblemOrder
 import com.rxjang.piece.domain.piece.model.Piece
 import com.rxjang.piece.domain.piece.model.PieceId
@@ -13,6 +15,7 @@ import com.rxjang.piece.presentation.piece.dto.request.AssignPieceToStudentReque
 import com.rxjang.piece.presentation.piece.dto.request.ChangeProblemOrderInPieceRequest
 import com.rxjang.piece.presentation.piece.dto.request.CreatePieceRequest
 import com.rxjang.piece.presentation.piece.dto.request.ProblemOrder
+import com.rxjang.piece.presentation.piece.dto.request.ScorePieceRequest
 import com.rxjang.piece.presentation.piece.dto.response.ChangeProblemOrderInPieceResponse
 
 object PieceConverter {
@@ -55,6 +58,19 @@ object PieceConverter {
             teacherId = TeacherId(this.teacherId),
             pieceId = PieceId(pieceId),
             studentIds = this.studentIds.map { StudentId(it) },
+        )
+    }
+
+    fun ScorePieceRequest.toCommand(pieceId: Int): ScorePieceCommand {
+        return ScorePieceCommand(
+            pieceId = PieceId(pieceId),
+            studentId = StudentId(this.studentId),
+            answers = this.answers.map {
+                ProblemWithAnswer(
+                    problemId = ProblemId(it.problemId),
+                    answer = it.answer,
+                )
+            }
         )
     }
 }

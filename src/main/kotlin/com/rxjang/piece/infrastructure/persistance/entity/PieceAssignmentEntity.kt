@@ -42,6 +42,10 @@ class PieceAssignmentEntity(
     var status: AssignmentStatus = status
         protected set
 
+    @Column(name = "score", nullable = false)
+    var score: Int = 0
+        protected set
+
     @CreationTimestamp
     @Column(name = "created_at", nullable = false, updatable = false)
     val createdAt: LocalDateTime = LocalDateTime.now()
@@ -53,10 +57,11 @@ class PieceAssignmentEntity(
         protected set
 
     /**
-     * 과제 상태
+     * 채점 완료로 상태 변경
      */
-    fun complete(): PieceAssignmentEntity {
+    fun updateScore(score: Int): PieceAssignmentEntity {
         this.status = AssignmentStatus.COMPLETED
+        this.score = score
         return this
     }
 }
