@@ -4,6 +4,7 @@ import com.rxjang.piece.domain.piece.command.AssignPieceCommand
 import com.rxjang.piece.domain.piece.model.Piece
 import com.rxjang.piece.domain.piece.model.PieceAssignment
 import com.rxjang.piece.domain.piece.model.PieceId
+import com.rxjang.piece.domain.piece.model.ProblemStatistic
 import com.rxjang.piece.domain.piece.reader.PieceReader
 import com.rxjang.piece.domain.problem.model.Problem
 import com.rxjang.piece.domain.user.model.StudentId
@@ -11,12 +12,14 @@ import com.rxjang.piece.infrastructure.persistance.mapper.PieceMapper.toModel
 import com.rxjang.piece.infrastructure.persistance.mapper.ProblemMapper.toModel
 import com.rxjang.piece.infrastructure.persistance.repository.PieceAssignmentRepository
 import com.rxjang.piece.infrastructure.persistance.repository.PieceRepository
+import com.rxjang.piece.infrastructure.persistance.repository.ProblemScoringRepository
 import org.springframework.stereotype.Repository
 
 @Repository
 class PieceReaderImpl(
     private val pieceRepository: PieceRepository,
     private val pieceAssignmentRepository: PieceAssignmentRepository,
+    private val problemScoreRepository: ProblemScoringRepository,
 ): PieceReader {
 
     override fun findById(id: PieceId): Piece? {
@@ -30,6 +33,10 @@ class PieceReaderImpl(
         return pieceAssignmentRepository.findByPieceIdAndStudentId(pieceId.value, studentId.value)?.toModel()
     }
 
+    override fun findPieceAssignments(pieceId: PieceId): List<PieceAssignment> {
+        return pieceAssignmentRepository.findByPieceId(pieceId.value).map { it.toModel() }
+    }
+
     override fun findProblemsInPieceForStudent(
         pieceId: PieceId,
         studentId: StudentId
@@ -41,6 +48,10 @@ class PieceReaderImpl(
     override fun findAlreadyAssignedStudents(command: AssignPieceCommand): List<StudentId> {
         return pieceAssignmentRepository.findByPieceIdAndStudentIdIn(command.pieceId.value, command.studentIds.map { it.value })
             .map { StudentId(it.studentId) }
+    }
+
+    override fun getProblemStatisticsByPieceId(pieceId: PieceId): List<ProblemStatistic> {
+        return problemScoreRepository.getProblemStatisticsByPieceId(pieceId.value)
     }
 
 

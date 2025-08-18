@@ -18,7 +18,7 @@ import com.rxjang.piece.infrastructure.persistance.mapper.PieceMapper.toModel
 import com.rxjang.piece.infrastructure.persistance.repository.PieceAssignmentRepository
 import com.rxjang.piece.infrastructure.persistance.repository.PieceProblemRepository
 import com.rxjang.piece.infrastructure.persistance.repository.PieceRepository
-import com.rxjang.piece.infrastructure.persistance.repository.ProblemScoreRepository
+import com.rxjang.piece.infrastructure.persistance.repository.ProblemScoringRepository
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Repository
 
@@ -27,7 +27,7 @@ class PieceStoreImpl(
     private val pieceRepository: PieceRepository,
     private val pieceProblemRepository: PieceProblemRepository,
     private val pieceAssignmentRepository: PieceAssignmentRepository,
-    private val problemScoreRepository: ProblemScoreRepository,
+    private val problemScoreRepository: ProblemScoringRepository,
 ): PieceStore {
 
     override fun createPiece(command: CreatePieceCommand): Piece {

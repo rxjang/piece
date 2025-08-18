@@ -28,7 +28,8 @@ object PieceMapper {
             id = PieceAssignmentId(this.id!!),
             pieceId = PieceId(this.pieceId),
             studentId = StudentId(this.studentId),
-            status = this.status
+            status = this.status,
+            score = this.score,
         )
     }
 }

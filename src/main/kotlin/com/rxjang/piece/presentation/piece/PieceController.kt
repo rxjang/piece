@@ -7,10 +7,14 @@ import com.rxjang.piece.application.dto.ChangeProblemOrderFailure
 import com.rxjang.piece.application.dto.ChangeProblemOrderSuccess
 import com.rxjang.piece.application.dto.CreatePieceFailure
 import com.rxjang.piece.application.dto.CreatePieceSuccess
+import com.rxjang.piece.application.dto.GetPieceStaticsResult
 import com.rxjang.piece.application.dto.ScorePieceResult
 import com.rxjang.piece.application.facade.PieceFacade
 import com.rxjang.piece.domain.piece.model.PieceId
+import com.rxjang.piece.domain.piece.model.PieceStatistics
+import com.rxjang.piece.domain.piece.query.GetPieceStatisticsQuery
 import com.rxjang.piece.domain.user.model.StudentId
+import com.rxjang.piece.domain.user.model.TeacherId
 import com.rxjang.piece.presentation.exception.BusinessException
 import com.rxjang.piece.presentation.piece.converter.PieceConverter.toChangeOrderResponse
 import com.rxjang.piece.presentation.piece.converter.PieceConverter.toCommand
@@ -113,6 +117,28 @@ class PieceController(
                     .ok()
                     .body(ScorePieceResponse(result.score))
             is ScorePieceResult.Failure -> throw BusinessException(result.failureCode)
+        }
+    }
+
+    /**
+     * 학습지 통계
+     */
+    @GetMapping("/{pieceId}/analyze")
+    fun analyzePiece(
+        @PathVariable pieceId: Int,
+        @RequestParam teacherId: Int,
+    ): ResponseEntity<PieceStatistics> {
+        val query = GetPieceStatisticsQuery(
+            pieceId = PieceId(pieceId),
+            teacherId = TeacherId(teacherId),
+        )
+        val result = pieceService.getPieceStatistics(query)
+        return when (result) {
+            is GetPieceStaticsResult.Success ->
+                ResponseEntity
+                    .ok()
+                    .body(result.statistics)
+            is GetPieceStaticsResult.Failure -> throw BusinessException(result.failureCode)
         }
     }
 }

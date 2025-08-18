@@ -4,16 +4,16 @@ import com.rxjang.piece.domain.piece.command.AssignPieceCommand
 import com.rxjang.piece.domain.piece.model.Piece
 import com.rxjang.piece.domain.piece.model.PieceAssignment
 import com.rxjang.piece.domain.piece.model.PieceId
+import com.rxjang.piece.domain.piece.model.ProblemStatistic
 import com.rxjang.piece.domain.problem.model.Problem
 import com.rxjang.piece.domain.user.model.StudentId
 
 interface PieceReader {
 
     fun findById(id: PieceId): Piece?
-
     fun findPieceAssignment(pieceId: PieceId, studentId: StudentId): PieceAssignment?
-
+    fun findPieceAssignments(pieceId: PieceId): List<PieceAssignment>
     fun findProblemsInPieceForStudent(pieceId: PieceId, studentId: StudentId): List<Problem>
-
     fun findAlreadyAssignedStudents(command: AssignPieceCommand): List<StudentId>
+    fun getProblemStatisticsByPieceId(pieceId: PieceId): List<ProblemStatistic>
 }

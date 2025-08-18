@@ -8,8 +8,11 @@ import com.rxjang.piece.application.dto.ChangeProblemOrderSuccess
 import com.rxjang.piece.application.dto.CreatePieceFailure
 import com.rxjang.piece.application.dto.CreatePieceResult
 import com.rxjang.piece.application.dto.CreatePieceSuccess
+import com.rxjang.piece.application.dto.GetPieceStaticsResult
+import com.rxjang.piece.domain.piece.model.PieceStatistics
 import com.rxjang.piece.application.dto.SaveScoredAnswerCommand
 import com.rxjang.piece.application.dto.ScorePieceResult
+import com.rxjang.piece.domain.piece.model.StudentStatistic
 import com.rxjang.piece.application.dto.UpdatePieceAssignmentCommand
 import com.rxjang.piece.domain.piece.command.AssignPieceCommand
 import com.rxjang.piece.domain.piece.command.ChangeProblemOrderCommand
@@ -17,6 +20,7 @@ import com.rxjang.piece.domain.piece.command.CreatePieceCommand
 import com.rxjang.piece.domain.piece.command.ScorePieceCommand
 import com.rxjang.piece.domain.piece.model.AssignmentStatus
 import com.rxjang.piece.domain.piece.model.PieceId
+import com.rxjang.piece.domain.piece.query.GetPieceStatisticsQuery
 import com.rxjang.piece.domain.piece.reader.PieceReader
 import com.rxjang.piece.domain.piece.store.PieceStore
 import com.rxjang.piece.domain.problem.model.Problem
@@ -76,7 +80,7 @@ class PieceService(
         // 기존 학습지 가져오기
         val piece = pieceReader.findById(command.pieceId) ?: return AssignPieceResult.Failure(PieceFailureCode.PIECE_NOT_FOUND)
         if (piece.teacherId != command.teacherId) {
-            return AssignPieceResult.Failure(PieceFailureCode.NOT_OWN_PIECE)
+            return AssignPieceResult.Failure(PieceFailureCode.UNAUTHORIZED_ACCESS)
         }
         // 기 출제된 학생 제외
         val alreadyAssignedStudents = pieceReader.findAlreadyAssignedStudents(command)
@@ -150,4 +154,60 @@ class PieceService(
     private fun isAnswerCorrect(studentAnswer: String, correctAnswer: String): Boolean {
         return studentAnswer.trim().lowercase() == correctAnswer.trim().lowercase()
     }
+
+    @Transactional(readOnly = true)
+    fun getPieceStatistics(query: GetPieceStatisticsQuery): GetPieceStaticsResult {
+        // 선생님이 만든 학습지인지 확인
+        val piece = pieceReader.findById(query.pieceId) ?: return GetPieceStaticsResult.Failure(PieceFailureCode.PIECE_NOT_FOUND)
+        if (piece.teacherId != query.teacherId) {
+            return GetPieceStaticsResult.Failure(PieceFailureCode.UNAUTHORIZED_ACCESS)
+        }
+
+        // 학습지에 출제된 모든 assignment 조회
+        val assignments = pieceReader.findPieceAssignments(query.pieceId)
+
+        // 아직 아무에게도 출제하지 않은 학습지
+        if (assignments.isEmpty()) {
+            return GetPieceStaticsResult.Success(
+                PieceStatistics(
+                    pieceId = query.pieceId,
+                    title = piece.title,
+                )
+            )
+        }
+
+        // 학생별 통계 계산
+        val studentStatistics = assignments.map { assignment ->
+            val correctRate = (assignment.score.toDouble() / piece.problemIds.size) * 100
+            StudentStatistic(
+                studentId = assignment.studentId,
+                status = assignment.status,
+                score = assignment.score,
+                correctRate = correctRate,
+            )
+        }
+
+        // 문제별 통계 계산
+        val problemStatistics = pieceReader.getProblemStatisticsByPieceId(query.pieceId)
+
+        // 전체 통계 계산
+        val completedAssignments = assignments.count { it.status == AssignmentStatus.COMPLETED }
+        val averageScore = studentStatistics
+            .map { it.correctRate }
+            .takeIf { it.isNotEmpty() }
+            ?.average() ?: 0.0
+
+        return GetPieceStaticsResult.Success(
+                PieceStatistics(
+                pieceId = query.pieceId,
+                title = piece.title,
+                totalAssignments = assignments.size,
+                completedAssignments = completedAssignments,
+                averageScore = averageScore,
+                studentStatistics = studentStatistics,
+                problemStatistics = problemStatistics
+            )
+        )
+    }
+
 }

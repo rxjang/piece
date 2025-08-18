@@ -7,6 +7,7 @@ data class PieceAssignment(
     val pieceId: PieceId,
     val studentId: StudentId,
     val status: AssignmentStatus,
+    val score: Int,
 )
 
 @JvmInline
