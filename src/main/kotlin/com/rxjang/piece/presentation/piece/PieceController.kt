@@ -1,5 +1,6 @@
 package com.rxjang.piece.presentation.piece
 
+import com.rxjang.piece.application.common.PieceFailureCode
 import com.rxjang.piece.application.dto.AssignPieceResult
 import com.rxjang.piece.application.service.PieceService
 import com.rxjang.piece.application.dto.ChangeProblemOrderFailure
@@ -7,6 +8,8 @@ import com.rxjang.piece.application.dto.ChangeProblemOrderSuccess
 import com.rxjang.piece.application.dto.CreatePieceFailure
 import com.rxjang.piece.application.dto.CreatePieceSuccess
 import com.rxjang.piece.application.facade.PieceFacade
+import com.rxjang.piece.domain.piece.model.PieceId
+import com.rxjang.piece.domain.user.model.StudentId
 import com.rxjang.piece.presentation.exception.BusinessException
 import com.rxjang.piece.presentation.piece.converter.PieceConverter.toChangeOrderResponse
 import com.rxjang.piece.presentation.piece.converter.PieceConverter.toCommand
@@ -16,9 +19,12 @@ import com.rxjang.piece.presentation.piece.dto.request.CreatePieceRequest
 import com.rxjang.piece.presentation.piece.dto.response.AssignPieceToStudentResponse
 import com.rxjang.piece.presentation.piece.dto.response.ChangeProblemOrderInPieceResponse
 import com.rxjang.piece.presentation.piece.dto.response.CreatePieceResponse
+import com.rxjang.piece.presentation.problem.converter.ProblemConverter.toNoAnswerResponse
+import com.rxjang.piece.presentation.problem.dto.response.ProblemWithNoAnswerResponse
 import jakarta.validation.Valid
 import org.springframework.http.ResponseEntity
 import org.springframework.validation.annotation.Validated
+import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PatchMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
@@ -76,6 +82,19 @@ class PieceController(
                     .ok()
                     .body(AssignPieceToStudentResponse(result.assignments.map { it.studentId.value }))
             is AssignPieceResult.Failure -> throw BusinessException(result.failureCode)
+        }
+    }
+
+    @GetMapping("/{pieceId}/problems")
+    fun getPiece(
+        @PathVariable pieceId: Int,
+        @RequestParam studentId: Int,
+    ): ResponseEntity<List<ProblemWithNoAnswerResponse>> {
+        val problems = pieceService.findProblemsInPieceForStudent(PieceId(pieceId), StudentId(studentId))
+        return if (problems.isEmpty()) {
+            throw BusinessException(PieceFailureCode.PIECE_NOT_FOUND)
+        } else {
+            ResponseEntity.ok().body(problems.map { it.toNoAnswerResponse() })
         }
     }
 }

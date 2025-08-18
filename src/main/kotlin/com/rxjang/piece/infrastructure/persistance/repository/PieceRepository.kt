@@ -1,10 +1,11 @@
 package com.rxjang.piece.infrastructure.persistance.repository
 
 import com.rxjang.piece.infrastructure.persistance.entity.PieceEntity
+import com.rxjang.piece.infrastructure.persistance.repository.custom.PieceRepositoryCustom
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Query
 
-interface PieceRepository: JpaRepository<PieceEntity, Int> {
+interface PieceRepository: JpaRepository<PieceEntity, Int>, PieceRepositoryCustom {
 
     @Query("""
         SELECT p 

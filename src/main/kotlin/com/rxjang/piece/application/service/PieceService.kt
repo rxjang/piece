@@ -11,9 +11,12 @@ import com.rxjang.piece.application.dto.CreatePieceSuccess
 import com.rxjang.piece.domain.piece.command.AssignPieceCommand
 import com.rxjang.piece.domain.piece.command.ChangeProblemOrderCommand
 import com.rxjang.piece.domain.piece.command.CreatePieceCommand
+import com.rxjang.piece.domain.piece.model.PieceId
 import com.rxjang.piece.domain.piece.reader.PieceReader
 import com.rxjang.piece.domain.piece.store.PieceStore
+import com.rxjang.piece.domain.problem.model.Problem
 import com.rxjang.piece.domain.problem.reader.ProblemReader
+import com.rxjang.piece.domain.user.model.StudentId
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -26,6 +29,11 @@ class PieceService(
     private val pieceReader: PieceReader,
     private val pieceStore: PieceStore,
 ) {
+
+    @Transactional(readOnly = true)
+    fun findProblemsInPieceForStudent(pieceId: PieceId, studentId: StudentId): List<Problem> {
+        return pieceReader.findProblemsInPieceForStudent(pieceId, studentId)
+    }
 
     @Transactional
     fun createPiece(command: CreatePieceCommand): CreatePieceResult {

@@ -344,3 +344,5 @@ INSERT INTO piece(title, user_id) VALUES ('수학 1', 1);
 INSERT INTO piece_problem(piece_id, problem_id, problem_order) VALUES (1, 1362, 1);
 INSERT INTO piece_problem(piece_id, problem_id, problem_order) VALUES (1, 1007, 2);
 INSERT INTO piece_problem(piece_id, problem_id, problem_order) VALUES (1, 1008, 3);
+
+INSERT INTO piece_assignment(piece_id, student_id) VALUES (1, 1);
