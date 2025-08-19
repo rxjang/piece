@@ -15,12 +15,13 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
 @Service
-@Transactional
+
 class AuthApplicationService(
     private val userAuthenticationService: UserAuthenticationService,
     private val tokenService: TokenService,
 ) {
 
+    @Transactional
     fun login(request: LoginRequest): LoginResponse {
         val credentials = UserCredentials(request.username, request.password)
         val authResult = userAuthenticationService.authenticateUser(credentials)

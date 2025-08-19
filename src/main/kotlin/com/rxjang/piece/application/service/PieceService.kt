@@ -2,12 +2,8 @@ package com.rxjang.piece.application.service
 
 import com.rxjang.piece.application.exception.codes.PieceFailureCode
 import com.rxjang.piece.application.dto.AssignPieceResult
-import com.rxjang.piece.application.dto.ChangeProblemOrderFailure
 import com.rxjang.piece.application.dto.ChangeProblemOrderResult
-import com.rxjang.piece.application.dto.ChangeProblemOrderSuccess
-import com.rxjang.piece.application.dto.CreatePieceFailure
 import com.rxjang.piece.application.dto.CreatePieceResult
-import com.rxjang.piece.application.dto.CreatePieceSuccess
 import com.rxjang.piece.application.dto.GetPieceStaticsResult
 import com.rxjang.piece.domain.piece.model.PieceStatistics
 import com.rxjang.piece.domain.piece.command.SaveScoredAnswerCommand
@@ -51,11 +47,11 @@ class PieceService(
         val command = request.toCommand()
         val problems = problemReader.getOrderedProblemsByIds(command.problemIds.toList())
         if (problems.size != command.problemIds.size) {
-            return CreatePieceFailure(PieceFailureCode.SOME_PROBLEMS_NOT_EXIST)
+            return CreatePieceResult.Failure(PieceFailureCode.SOME_PROBLEMS_NOT_EXIST)
         }
         // 정렬된 순서로 학습지 생성
         val piece = pieceStore.createPiece(command.copy(problemIds = problems.map { it.id }.toSet()), authContext.getCurrentTeacherId())
-        return CreatePieceSuccess(piece)
+        return CreatePieceResult.Success(piece)
     }
 
     @Transactional
@@ -63,19 +59,19 @@ class PieceService(
         val command = request.toCommand(pieceId)
         // command 순서 검증
         if (!command.validateOrder()) {
-            return ChangeProblemOrderFailure(PieceFailureCode.INVALID_PROBLEM_ORDER)
+            return ChangeProblemOrderResult.Failure(PieceFailureCode.INVALID_PROBLEM_ORDER)
         }
         // 기존 학습지 가져오기
-        val piece = pieceReader.findById(command.pieceId) ?: return ChangeProblemOrderFailure(PieceFailureCode.PIECE_NOT_FOUND)
+        val piece = pieceReader.findById(command.pieceId) ?: return ChangeProblemOrderResult.Failure(PieceFailureCode.PIECE_NOT_FOUND)
 
         // 기존 학습지에 매핑되어있는 문제만 존재하는지 확인
         val requestProblemIds = command.problemOrders.map { it.problemId }
         logger.debug { "[학습지 문제 순서 조정] requestIds: $requestProblemIds, actualIds: ${piece.problemIds}" }
         if (!piece.problemIds.containsAll(requestProblemIds)) {
-            return ChangeProblemOrderFailure(PieceFailureCode.PROBLEM_ID_NOT_MATCHED_FOR_ORDER)
+            return ChangeProblemOrderResult.Failure(PieceFailureCode.PROBLEM_ID_NOT_MATCHED_FOR_ORDER)
         }
         val updated = pieceStore.changeProblemOrder(command)
-        return ChangeProblemOrderSuccess(piece.copy(problemIds = updated))
+        return ChangeProblemOrderResult.Success(piece.copy(problemIds = updated))
     }
 
     @Transactional

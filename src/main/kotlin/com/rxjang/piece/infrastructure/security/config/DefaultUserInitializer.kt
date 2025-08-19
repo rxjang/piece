@@ -19,7 +19,7 @@ class DefaultUserInitializer(
     @PostConstruct
     fun initDefaultUsers() {
         if (userRepository.count() == 0L) {
-            logger.info { "기본 사용자 데이터 생성합" }
+            logger.info { "기본 사용자 데이터 생성" }
             createDefaultUsers()
             logger.info { "기본 사용자 데이터 생성이 완료" }
         } else {
@@ -67,7 +67,7 @@ class DefaultUserInitializer(
 
         // 로그로 생성된 사용자 정보 출력
         defaultUsers.forEach { user ->
-            logger.info {"생성된 사용자: ${user.userType} - ${user.username} (${user.name})" }
+            logger.info { "생성된 사용자: ${user.userType} - ${user.username} (${user.name})" }
         }
     }
 }
