@@ -5,5 +5,4 @@ import com.rxjang.piece.domain.user.model.TeacherId
 
 data class GetPieceStatisticsQuery(
     val pieceId: PieceId,
-    val teacherId: TeacherId,
 )

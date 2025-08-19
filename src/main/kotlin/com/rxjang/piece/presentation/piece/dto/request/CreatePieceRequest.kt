@@ -7,7 +7,6 @@ import org.springframework.validation.annotation.Validated
 
 @Validated
 data class CreatePieceRequest(
-    val teacherId: Int,
     @field:Size(min = 2, max = 100, message = "제목은 2자 이상 100자 이하로 입력해주세요.")
     @field:NotBlank(message = "제목을 입력해주세요.")
     val title: String,

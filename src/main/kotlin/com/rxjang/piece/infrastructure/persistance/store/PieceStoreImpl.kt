@@ -10,6 +10,7 @@ import com.rxjang.piece.domain.piece.model.PieceAssignment
 import com.rxjang.piece.domain.piece.model.PieceId
 import com.rxjang.piece.domain.piece.store.PieceStore
 import com.rxjang.piece.domain.problem.model.ProblemId
+import com.rxjang.piece.domain.user.model.TeacherId
 import com.rxjang.piece.infrastructure.persistance.entity.PieceAssignmentEntity
 import com.rxjang.piece.infrastructure.persistance.entity.PieceEntity
 import com.rxjang.piece.infrastructure.persistance.entity.PieceProblemEntity
@@ -30,10 +31,10 @@ class PieceStoreImpl(
     private val problemScoreRepository: ProblemScoringRepository,
 ): PieceStore {
 
-    override fun createPiece(command: CreatePieceCommand): Piece {
+    override fun createPiece(command: CreatePieceCommand, teacherId: TeacherId): Piece {
         val piece = PieceEntity(
             title = command.title,
-            userId = command.teacherId.value,
+            userId = teacherId.value,
         )
         val saved = pieceRepository.save(piece)
         val pieceId = saved.id!!
@@ -49,7 +50,7 @@ class PieceStoreImpl(
         return Piece(
             id = PieceId(pieceId),
             title = saved.title,
-            teacherId = command.teacherId,
+            teacherId = teacherId,
             problemIds = command.problemIds.toList()
         )
     }

@@ -22,7 +22,6 @@ object PieceConverter {
 
     fun CreatePieceRequest.toCommand(): CreatePieceCommand {
         return CreatePieceCommand(
-            teacherId = TeacherId(this.teacherId),
             title = this.title,
             problemIds = this.problemIds.map { ProblemId(it) }.toSet(),
         )
@@ -31,7 +30,6 @@ object PieceConverter {
     fun ChangeProblemOrderInPieceRequest.toCommand(pieceId: Int): ChangeProblemOrderCommand {
         return ChangeProblemOrderCommand(
             pieceId = PieceId(pieceId),
-            teacherId = TeacherId(this.teacherId),
             problemOrders = this.problemOrders.map {
                 DomainProblemOrder(
                     problemId = ProblemId(it.problemId),
@@ -55,7 +53,6 @@ object PieceConverter {
 
     fun AssignPieceToStudentRequest.toCommand(pieceId: Int): AssignPieceCommand {
         return AssignPieceCommand(
-            teacherId = TeacherId(this.teacherId),
             pieceId = PieceId(pieceId),
             studentIds = this.studentIds.map { StudentId(it) },
         )
@@ -64,7 +61,6 @@ object PieceConverter {
     fun ScorePieceRequest.toCommand(pieceId: Int): ScorePieceCommand {
         return ScorePieceCommand(
             pieceId = PieceId(pieceId),
-            studentId = StudentId(this.studentId),
             answers = this.answers.map {
                 ProblemWithAnswer(
                     problemId = ProblemId(it.problemId),

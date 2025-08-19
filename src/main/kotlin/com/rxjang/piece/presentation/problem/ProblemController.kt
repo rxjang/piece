@@ -3,20 +3,24 @@ package com.rxjang.piece.presentation.problem
 import com.rxjang.piece.application.service.ProblemService
 import com.rxjang.piece.domain.problem.query.SearchProblemQuery
 import com.rxjang.piece.domain.problem.model.ProblemLevel
+import com.rxjang.piece.infrastructure.security.config.SecurityConstants.TEACHER_ROLE
 import com.rxjang.piece.presentation.problem.dto.request.ProblemRequestType
 import com.rxjang.piece.presentation.problem.converter.ProblemConverter.toResponse
 import com.rxjang.piece.presentation.problem.dto.response.SearchProblemResponse
+import io.github.oshai.kotlinlogging.KotlinLogging
 import jakarta.validation.constraints.Min
 import jakarta.validation.constraints.NotEmpty
-import org.slf4j.LoggerFactory
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 import org.springframework.web.server.ResponseStatusException
+
+private val logger = KotlinLogging.logger {}
 
 @RestController
 @RequestMapping("/problems")
@@ -25,9 +29,8 @@ class ProblemController(
     private val problemService: ProblemService,
 ) {
 
-    val logger = LoggerFactory.getLogger("ProblemController")
-
     @GetMapping
+    @PreAuthorize(TEACHER_ROLE)
     fun search(
         @RequestParam
         @Min(value = 1, message = "요청 문제수는 1개 이상이어야 합니다")
@@ -54,7 +57,7 @@ class ProblemController(
 
             ResponseEntity.ok(SearchProblemResponse(response))
         } catch (e: Exception) {
-            logger.error("Error while searching problem", e)
+            logger.error(e)  {"Error while searching problem" }
             throw ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "문제 검색 중 오류가 발생했습니다")
         }
 

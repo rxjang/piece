@@ -1,10 +1,15 @@
 package com.rxjang.piece.presentation.exception
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.rxjang.piece.application.common.AuthFailureCode
+import com.rxjang.piece.application.common.UserFailureCode
 import io.github.oshai.kotlinlogging.KotlinLogging
+import io.jsonwebtoken.JwtException
 import jakarta.validation.ValidationException
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.security.authentication.BadCredentialsException
+import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestControllerAdvice
@@ -21,6 +26,36 @@ class RestExceptionHandler(
         logger.error(e) { "예외 발생: ${e.message}" }
         val httpStatus = getHttpStatus(e)
         return ResponseEntity(getRestResponse(httpStatus, e), httpStatus)
+    }
+
+    // JWT 토큰 관련 예외 처리
+    @ExceptionHandler(JwtException::class)
+    fun handleJwtException(ex: JwtException): ResponseEntity<RestExceptionResponse> {
+        val errorResponse = RestExceptionResponse(
+            errorCode = AuthFailureCode.INVALID_TOKEN.fullCode(),
+            message = AuthFailureCode.INVALID_TOKEN.message,
+        )
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse)
+    }
+
+    // 인증 실패 예외 처리 (로그인 시)
+    @ExceptionHandler(BadCredentialsException::class)
+    fun handleBadCredentialsException(ex: BadCredentialsException): ResponseEntity<RestExceptionResponse> {
+        val errorResponse = RestExceptionResponse(
+            errorCode = AuthFailureCode.INVALID_CREDENTIALS.fullCode(),
+            message = AuthFailureCode.INVALID_CREDENTIALS.message,
+        )
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse)
+    }
+
+    // 사용자를 찾을 수 없는 경우
+    @ExceptionHandler(UsernameNotFoundException::class)
+    fun handleUsernameNotFoundException(ex: UsernameNotFoundException): ResponseEntity<RestExceptionResponse> {
+        val errorResponse = RestExceptionResponse(
+            errorCode = UserFailureCode.CANNOT_FIND_USER.fullCode(),
+            message = UserFailureCode.CANNOT_FIND_USER.message,
+        )
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(errorResponse)
     }
 
     @ExceptionHandler(MethodArgumentNotValidException::class)

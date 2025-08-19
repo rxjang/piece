@@ -33,6 +33,10 @@ spring:
         - classpath:sql/data.sql
       continue-on-error: false
 
+jwt:
+  secret: myVeryLongAndSecureSecretKeyForJWTTokenGenerationAndValidationThatIs512BitsOrMoreThan256
+  expiration: 86400
+
 logging:
   level:
     com.rxjang: debug

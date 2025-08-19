@@ -15,6 +15,8 @@ import com.rxjang.piece.domain.piece.model.PieceStatistics
 import com.rxjang.piece.domain.piece.query.GetPieceStatisticsQuery
 import com.rxjang.piece.domain.user.model.StudentId
 import com.rxjang.piece.domain.user.model.TeacherId
+import com.rxjang.piece.infrastructure.security.config.SecurityConstants.STUDENT_ROLE
+import com.rxjang.piece.infrastructure.security.config.SecurityConstants.TEACHER_ROLE
 import com.rxjang.piece.presentation.exception.BusinessException
 import com.rxjang.piece.presentation.piece.converter.PieceConverter.toChangeOrderResponse
 import com.rxjang.piece.presentation.piece.converter.PieceConverter.toCommand
@@ -30,6 +32,7 @@ import com.rxjang.piece.presentation.problem.converter.ProblemConverter.toNoAnsw
 import com.rxjang.piece.presentation.problem.dto.response.ProblemWithNoAnswerResponse
 import jakarta.validation.Valid
 import org.springframework.http.ResponseEntity
+import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PatchMapping
@@ -50,6 +53,7 @@ class PieceController(
 ) {
 
     @PostMapping
+    @PreAuthorize(TEACHER_ROLE)
     fun createPiece(@RequestBody @Valid request: CreatePieceRequest): ResponseEntity<CreatePieceResponse> {
         val result = pieceService.createPiece(request.toCommand())
         return when(result) {
@@ -64,6 +68,7 @@ class PieceController(
     }
 
     @PatchMapping("/{pieceId}/order")
+    @PreAuthorize(TEACHER_ROLE)
     fun changeProblemOrder(
         @PathVariable pieceId: Int,
         @RequestBody @Valid request: ChangeProblemOrderInPieceRequest
@@ -78,6 +83,7 @@ class PieceController(
     }
 
     @PostMapping("/{pieceId}")
+    @PreAuthorize(TEACHER_ROLE)
     fun assignToStudent(
         @PathVariable pieceId: Int,
         @RequestBody @Valid request: AssignPieceToStudentRequest
@@ -94,11 +100,11 @@ class PieceController(
     }
 
     @GetMapping("/{pieceId}/problems")
+    @PreAuthorize(STUDENT_ROLE)
     fun getPiece(
-        @PathVariable pieceId: Int,
-        @RequestParam studentId: Int,
+        @PathVariable pieceId: Int
     ): ResponseEntity<List<ProblemWithNoAnswerResponse>> {
-        val problems = pieceService.findProblemsInPieceForStudent(PieceId(pieceId), StudentId(studentId))
+        val problems = pieceService.findProblemsInPieceForStudent(PieceId(pieceId))
         return if (problems.isEmpty()) {
             throw BusinessException(PieceFailureCode.PIECE_NOT_FOUND)
         } else {
@@ -107,10 +113,12 @@ class PieceController(
     }
 
     @PutMapping("/{pieceId}/score")
+    @PreAuthorize(STUDENT_ROLE)
     fun scorePiece(
         @PathVariable pieceId: Int,
         @RequestBody @Valid request: ScorePieceRequest): ResponseEntity<ScorePieceResponse> {
-        val result = pieceService.score(request.toCommand(pieceId))
+        val command = request.toCommand(pieceId)
+        val result = pieceService.score(command)
         return when (result) {
             is ScorePieceResult.Success ->
                 ResponseEntity
@@ -124,14 +132,11 @@ class PieceController(
      * 학습지 통계
      */
     @GetMapping("/{pieceId}/analyze")
+    @PreAuthorize(TEACHER_ROLE)
     fun analyzePiece(
         @PathVariable pieceId: Int,
-        @RequestParam teacherId: Int,
     ): ResponseEntity<PieceStatistics> {
-        val query = GetPieceStatisticsQuery(
-            pieceId = PieceId(pieceId),
-            teacherId = TeacherId(teacherId),
-        )
+        val query = GetPieceStatisticsQuery(pieceId = PieceId(pieceId))
         val result = pieceService.getPieceStatistics(query)
         return when (result) {
             is GetPieceStaticsResult.Success ->

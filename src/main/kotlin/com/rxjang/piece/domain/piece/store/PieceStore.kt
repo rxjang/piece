@@ -8,10 +8,11 @@ import com.rxjang.piece.domain.piece.command.CreatePieceCommand
 import com.rxjang.piece.domain.piece.model.Piece
 import com.rxjang.piece.domain.piece.model.PieceAssignment
 import com.rxjang.piece.domain.problem.model.ProblemId
+import com.rxjang.piece.domain.user.model.TeacherId
 
 interface PieceStore {
 
-    fun createPiece(command: CreatePieceCommand): Piece
+    fun createPiece(command: CreatePieceCommand, teacherId: TeacherId): Piece
     fun changeProblemOrder(command: ChangeProblemOrderCommand): List<ProblemId>
     fun assignToStudent(command: AssignPieceCommand): List<PieceAssignment>
     fun saveScoringPieceResult(commands: List<SaveScoredAnswerCommand>)

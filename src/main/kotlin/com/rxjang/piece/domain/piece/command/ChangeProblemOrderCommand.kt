@@ -2,11 +2,9 @@ package com.rxjang.piece.domain.piece.command
 
 import com.rxjang.piece.domain.piece.model.PieceId
 import com.rxjang.piece.domain.problem.model.ProblemId
-import com.rxjang.piece.domain.user.model.TeacherId
 
 data class ChangeProblemOrderCommand(
     val pieceId: PieceId,
-    val teacherId: TeacherId,
     val problemOrders: List<ProblemOrder>,
 ) {
 

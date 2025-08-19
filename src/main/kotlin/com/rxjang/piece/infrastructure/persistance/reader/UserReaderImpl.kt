@@ -3,7 +3,7 @@ package com.rxjang.piece.infrastructure.persistance.reader
 import com.rxjang.piece.domain.user.model.Student
 import com.rxjang.piece.domain.user.model.StudentId
 import com.rxjang.piece.domain.user.reader.UserReader
-import com.rxjang.piece.infrastructure.persistance.entity.UserType
+import com.rxjang.piece.domain.user.model.UserType
 import com.rxjang.piece.infrastructure.persistance.mapper.UserMapper.toStudent
 import com.rxjang.piece.infrastructure.persistance.repository.UserRepository
 import org.springframework.stereotype.Repository

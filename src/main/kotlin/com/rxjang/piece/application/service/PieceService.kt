@@ -26,6 +26,7 @@ import com.rxjang.piece.domain.piece.store.PieceStore
 import com.rxjang.piece.domain.problem.model.Problem
 import com.rxjang.piece.domain.problem.reader.ProblemReader
 import com.rxjang.piece.domain.user.model.StudentId
+import com.rxjang.piece.domain.user.service.AuthenticationContext
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -37,11 +38,12 @@ class PieceService(
     private val problemReader: ProblemReader,
     private val pieceReader: PieceReader,
     private val pieceStore: PieceStore,
+    private val authContext: AuthenticationContext,
 ) {
 
     @Transactional(readOnly = true)
-    fun findProblemsInPieceForStudent(pieceId: PieceId, studentId: StudentId): List<Problem> {
-        return pieceReader.findProblemsInPieceForStudent(pieceId, studentId)
+    fun findProblemsInPieceForStudent(pieceId: PieceId): List<Problem> {
+        return pieceReader.findProblemsInPieceForStudent(pieceId, authContext.getCurrentStudentId())
     }
 
     @Transactional
@@ -52,7 +54,7 @@ class PieceService(
             return CreatePieceFailure(PieceFailureCode.SOME_PROBLEMS_NOT_EXIST)
         }
         // 정렬된 순서로 학습지 생성
-        val piece = pieceStore.createPiece(command.copy(problemIds = problems.map { it.id }.toSet()))
+        val piece = pieceStore.createPiece(command.copy(problemIds = problems.map { it.id }.toSet()), authContext.getCurrentTeacherId())
         return CreatePieceSuccess(piece)
     }
 
@@ -79,7 +81,7 @@ class PieceService(
     fun assignPieceToStudent(command: AssignPieceCommand): AssignPieceResult {
         // 기존 학습지 가져오기
         val piece = pieceReader.findById(command.pieceId) ?: return AssignPieceResult.Failure(PieceFailureCode.PIECE_NOT_FOUND)
-        if (piece.teacherId != command.teacherId) {
+        if (piece.teacherId != authContext.getCurrentTeacherId()) {
             return AssignPieceResult.Failure(PieceFailureCode.UNAUTHORIZED_ACCESS)
         }
         // 기 출제된 학생 제외
@@ -94,8 +96,9 @@ class PieceService(
 
     @Transactional
     fun score(command: ScorePieceCommand): ScorePieceResult {
+        val studentId = authContext.getCurrentStudentId()
         // 학생에게 받은 학습지가 맞는지 확인
-        val assignment = pieceReader.findPieceAssignment(command.pieceId, command.studentId)
+        val assignment = pieceReader.findPieceAssignment(command.pieceId, studentId)
             ?: return ScorePieceResult.Failure(PieceFailureCode.ASSIGNMENT_NOT_FOUND)
 
         // 이미 완료된 학습지인지 확인
@@ -104,7 +107,7 @@ class PieceService(
         }
 
         // 해당 학습지의 모든 문제 조회
-        val pieceProblems = pieceReader.findProblemsInPieceForStudent(command.pieceId, command.studentId)
+        val pieceProblems = pieceReader.findProblemsInPieceForStudent(command.pieceId, studentId)
         // 모든 문제가 답변으로 들어왔는지 확인
         val problemIds = pieceProblems.map { it.id }.toSet()
         val submittedProblemIds = command.answers.map { it.problemId }.toSet()
@@ -159,7 +162,7 @@ class PieceService(
     fun getPieceStatistics(query: GetPieceStatisticsQuery): GetPieceStaticsResult {
         // 선생님이 만든 학습지인지 확인
         val piece = pieceReader.findById(query.pieceId) ?: return GetPieceStaticsResult.Failure(PieceFailureCode.PIECE_NOT_FOUND)
-        if (piece.teacherId != query.teacherId) {
+        if (piece.teacherId != authContext.getCurrentTeacherId()) {
             return GetPieceStaticsResult.Failure(PieceFailureCode.UNAUTHORIZED_ACCESS)
         }
 

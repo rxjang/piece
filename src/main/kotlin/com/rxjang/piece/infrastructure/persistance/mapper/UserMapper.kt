@@ -4,8 +4,8 @@ import com.rxjang.piece.domain.user.model.Student
 import com.rxjang.piece.domain.user.model.StudentId
 import com.rxjang.piece.domain.user.model.Teacher
 import com.rxjang.piece.domain.user.model.TeacherId
+import com.rxjang.piece.domain.user.model.UserType
 import com.rxjang.piece.infrastructure.persistance.entity.UserEntity
-import com.rxjang.piece.infrastructure.persistance.entity.UserType
 
 object UserMapper {
 

@@ -5,7 +5,6 @@ import org.springframework.validation.annotation.Validated
 
 @Validated
 data class ScorePieceRequest(
-    val studentId: Int,
     @field:NotEmpty(message = "답변은 비어 있을 수 없습니다")
     val answers: List<ProblemWithAnswerRequest>
 )
