@@ -1,7 +1,7 @@
 package com.rxjang.piece.domain.piece.store
 
-import com.rxjang.piece.application.dto.SaveScoredAnswerCommand
-import com.rxjang.piece.application.dto.UpdatePieceAssignmentCommand
+import com.rxjang.piece.domain.piece.command.SaveScoredAnswerCommand
+import com.rxjang.piece.domain.piece.command.UpdatePieceAssignmentCommand
 import com.rxjang.piece.domain.piece.command.AssignPieceCommand
 import com.rxjang.piece.domain.piece.command.ChangeProblemOrderCommand
 import com.rxjang.piece.domain.piece.command.CreatePieceCommand

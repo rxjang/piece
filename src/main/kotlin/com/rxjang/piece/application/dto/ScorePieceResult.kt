@@ -1,6 +1,6 @@
 package com.rxjang.piece.application.dto
 
-import com.rxjang.piece.application.common.PieceFailureCode
+import com.rxjang.piece.application.exception.codes.PieceFailureCode
 
 sealed class ScorePieceResult{
     data class Success(val score: Int) : ScorePieceResult()

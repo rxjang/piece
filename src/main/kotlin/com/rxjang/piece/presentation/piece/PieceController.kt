@@ -1,6 +1,6 @@
 package com.rxjang.piece.presentation.piece
 
-import com.rxjang.piece.application.common.PieceFailureCode
+import com.rxjang.piece.application.exception.codes.PieceFailureCode
 import com.rxjang.piece.application.dto.AssignPieceResult
 import com.rxjang.piece.application.service.PieceService
 import com.rxjang.piece.application.dto.ChangeProblemOrderFailure
@@ -10,26 +10,21 @@ import com.rxjang.piece.application.dto.CreatePieceSuccess
 import com.rxjang.piece.application.dto.GetPieceStaticsResult
 import com.rxjang.piece.application.dto.ScorePieceResult
 import com.rxjang.piece.application.facade.PieceFacade
-import com.rxjang.piece.domain.piece.model.PieceId
 import com.rxjang.piece.domain.piece.model.PieceStatistics
-import com.rxjang.piece.domain.piece.query.GetPieceStatisticsQuery
-import com.rxjang.piece.domain.user.model.StudentId
-import com.rxjang.piece.domain.user.model.TeacherId
-import com.rxjang.piece.infrastructure.security.config.SecurityConstants.STUDENT_ROLE
-import com.rxjang.piece.infrastructure.security.config.SecurityConstants.TEACHER_ROLE
-import com.rxjang.piece.presentation.exception.BusinessException
-import com.rxjang.piece.presentation.piece.converter.PieceConverter.toChangeOrderResponse
-import com.rxjang.piece.presentation.piece.converter.PieceConverter.toCommand
-import com.rxjang.piece.presentation.piece.dto.request.AssignPieceToStudentRequest
-import com.rxjang.piece.presentation.piece.dto.request.ChangeProblemOrderInPieceRequest
-import com.rxjang.piece.presentation.piece.dto.request.CreatePieceRequest
-import com.rxjang.piece.presentation.piece.dto.request.ScorePieceRequest
-import com.rxjang.piece.presentation.piece.dto.response.AssignPieceToStudentResponse
-import com.rxjang.piece.presentation.piece.dto.response.ChangeProblemOrderInPieceResponse
-import com.rxjang.piece.presentation.piece.dto.response.CreatePieceResponse
-import com.rxjang.piece.presentation.piece.dto.response.ScorePieceResponse
-import com.rxjang.piece.presentation.problem.converter.ProblemConverter.toNoAnswerResponse
-import com.rxjang.piece.presentation.problem.dto.response.ProblemWithNoAnswerResponse
+import com.rxjang.piece.presentation.security.SecurityConstants.STUDENT_ROLE
+import com.rxjang.piece.presentation.security.SecurityConstants.TEACHER_ROLE
+import com.rxjang.piece.application.exception.BusinessException
+import com.rxjang.piece.application.dto.converter.PieceConverter.toChangeOrderResponse
+import com.rxjang.piece.application.dto.request.AssignPieceToStudentRequest
+import com.rxjang.piece.application.dto.request.ChangeProblemOrderInPieceRequest
+import com.rxjang.piece.application.dto.request.CreatePieceRequest
+import com.rxjang.piece.application.dto.request.ScorePieceRequest
+import com.rxjang.piece.application.dto.response.AssignPieceToStudentResponse
+import com.rxjang.piece.application.dto.response.ChangeProblemOrderInPieceResponse
+import com.rxjang.piece.application.dto.response.CreatePieceResponse
+import com.rxjang.piece.application.dto.response.ScorePieceResponse
+import com.rxjang.piece.application.dto.converter.ProblemConverter.toNoAnswerResponse
+import com.rxjang.piece.application.dto.response.ProblemWithNoAnswerResponse
 import jakarta.validation.Valid
 import org.springframework.http.ResponseEntity
 import org.springframework.security.access.prepost.PreAuthorize
@@ -41,7 +36,6 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.PutMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
@@ -55,7 +49,7 @@ class PieceController(
     @PostMapping
     @PreAuthorize(TEACHER_ROLE)
     fun createPiece(@RequestBody @Valid request: CreatePieceRequest): ResponseEntity<CreatePieceResponse> {
-        val result = pieceService.createPiece(request.toCommand())
+        val result = pieceService.createPiece(request)
         return when(result) {
             is CreatePieceSuccess ->
                 ResponseEntity
@@ -73,7 +67,7 @@ class PieceController(
         @PathVariable pieceId: Int,
         @RequestBody @Valid request: ChangeProblemOrderInPieceRequest
     ): ResponseEntity<ChangeProblemOrderInPieceResponse> {
-        val result = pieceService.changeProblemOrder(request.toCommand(pieceId))
+        val result = pieceService.changeProblemOrder(pieceId, request)
         return when (result) {
             is ChangeProblemOrderSuccess ->
                 ResponseEntity.ok()
@@ -88,8 +82,7 @@ class PieceController(
         @PathVariable pieceId: Int,
         @RequestBody @Valid request: AssignPieceToStudentRequest
     ): ResponseEntity<AssignPieceToStudentResponse> {
-        val command = request.toCommand(pieceId)
-        val result = pieceFacade.assignPieceToStudent(command)
+        val result = pieceFacade.assignPieceToStudent(pieceId, request)
         return when (result) {
             is AssignPieceResult.Success ->
                 ResponseEntity
@@ -104,7 +97,7 @@ class PieceController(
     fun getPiece(
         @PathVariable pieceId: Int
     ): ResponseEntity<List<ProblemWithNoAnswerResponse>> {
-        val problems = pieceService.findProblemsInPieceForStudent(PieceId(pieceId))
+        val problems = pieceService.findProblemsInPieceForStudent(pieceId)
         return if (problems.isEmpty()) {
             throw BusinessException(PieceFailureCode.PIECE_NOT_FOUND)
         } else {
@@ -117,8 +110,7 @@ class PieceController(
     fun scorePiece(
         @PathVariable pieceId: Int,
         @RequestBody @Valid request: ScorePieceRequest): ResponseEntity<ScorePieceResponse> {
-        val command = request.toCommand(pieceId)
-        val result = pieceService.score(command)
+        val result = pieceService.score(pieceId, request)
         return when (result) {
             is ScorePieceResult.Success ->
                 ResponseEntity
@@ -136,8 +128,7 @@ class PieceController(
     fun analyzePiece(
         @PathVariable pieceId: Int,
     ): ResponseEntity<PieceStatistics> {
-        val query = GetPieceStatisticsQuery(pieceId = PieceId(pieceId))
-        val result = pieceService.getPieceStatistics(query)
+        val result = pieceService.getPieceStatistics(pieceId)
         return when (result) {
             is GetPieceStaticsResult.Success ->
                 ResponseEntity

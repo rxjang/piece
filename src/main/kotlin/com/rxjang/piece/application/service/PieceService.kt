@@ -1,6 +1,6 @@
 package com.rxjang.piece.application.service
 
-import com.rxjang.piece.application.common.PieceFailureCode
+import com.rxjang.piece.application.exception.codes.PieceFailureCode
 import com.rxjang.piece.application.dto.AssignPieceResult
 import com.rxjang.piece.application.dto.ChangeProblemOrderFailure
 import com.rxjang.piece.application.dto.ChangeProblemOrderResult
@@ -10,23 +10,22 @@ import com.rxjang.piece.application.dto.CreatePieceResult
 import com.rxjang.piece.application.dto.CreatePieceSuccess
 import com.rxjang.piece.application.dto.GetPieceStaticsResult
 import com.rxjang.piece.domain.piece.model.PieceStatistics
-import com.rxjang.piece.application.dto.SaveScoredAnswerCommand
+import com.rxjang.piece.domain.piece.command.SaveScoredAnswerCommand
 import com.rxjang.piece.application.dto.ScorePieceResult
+import com.rxjang.piece.application.dto.converter.PieceConverter.toCommand
+import com.rxjang.piece.application.dto.request.ChangeProblemOrderInPieceRequest
+import com.rxjang.piece.application.dto.request.CreatePieceRequest
+import com.rxjang.piece.application.dto.request.ScorePieceRequest
 import com.rxjang.piece.domain.piece.model.StudentStatistic
-import com.rxjang.piece.application.dto.UpdatePieceAssignmentCommand
+import com.rxjang.piece.domain.piece.command.UpdatePieceAssignmentCommand
 import com.rxjang.piece.domain.piece.command.AssignPieceCommand
-import com.rxjang.piece.domain.piece.command.ChangeProblemOrderCommand
-import com.rxjang.piece.domain.piece.command.CreatePieceCommand
-import com.rxjang.piece.domain.piece.command.ScorePieceCommand
 import com.rxjang.piece.domain.piece.model.AssignmentStatus
 import com.rxjang.piece.domain.piece.model.PieceId
-import com.rxjang.piece.domain.piece.query.GetPieceStatisticsQuery
 import com.rxjang.piece.domain.piece.reader.PieceReader
 import com.rxjang.piece.domain.piece.store.PieceStore
 import com.rxjang.piece.domain.problem.model.Problem
 import com.rxjang.piece.domain.problem.reader.ProblemReader
-import com.rxjang.piece.domain.user.model.StudentId
-import com.rxjang.piece.domain.user.service.AuthenticationContext
+import com.rxjang.piece.domain.auth.service.AuthenticationContext
 import io.github.oshai.kotlinlogging.KotlinLogging
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -42,13 +41,14 @@ class PieceService(
 ) {
 
     @Transactional(readOnly = true)
-    fun findProblemsInPieceForStudent(pieceId: PieceId): List<Problem> {
-        return pieceReader.findProblemsInPieceForStudent(pieceId, authContext.getCurrentStudentId())
+    fun findProblemsInPieceForStudent(pieceId: Int): List<Problem> {
+        return pieceReader.findProblemsInPieceForStudent(PieceId(pieceId), authContext.getCurrentStudentId())
     }
 
     @Transactional
-    fun createPiece(command: CreatePieceCommand): CreatePieceResult {
+    fun createPiece(request: CreatePieceRequest): CreatePieceResult {
         // 문제 정렬해서 가져오기
+        val command = request.toCommand()
         val problems = problemReader.getOrderedProblemsByIds(command.problemIds.toList())
         if (problems.size != command.problemIds.size) {
             return CreatePieceFailure(PieceFailureCode.SOME_PROBLEMS_NOT_EXIST)
@@ -59,7 +59,8 @@ class PieceService(
     }
 
     @Transactional
-    fun changeProblemOrder(command: ChangeProblemOrderCommand): ChangeProblemOrderResult {
+    fun changeProblemOrder(pieceId: Int, request: ChangeProblemOrderInPieceRequest): ChangeProblemOrderResult {
+        val command = request.toCommand(pieceId)
         // command 순서 검증
         if (!command.validateOrder()) {
             return ChangeProblemOrderFailure(PieceFailureCode.INVALID_PROBLEM_ORDER)
@@ -95,8 +96,9 @@ class PieceService(
     }
 
     @Transactional
-    fun score(command: ScorePieceCommand): ScorePieceResult {
+    fun score(pieceId: Int, request: ScorePieceRequest): ScorePieceResult {
         val studentId = authContext.getCurrentStudentId()
+        val command = request.toCommand(pieceId)
         // 학생에게 받은 학습지가 맞는지 확인
         val assignment = pieceReader.findPieceAssignment(command.pieceId, studentId)
             ?: return ScorePieceResult.Failure(PieceFailureCode.ASSIGNMENT_NOT_FOUND)
@@ -159,21 +161,22 @@ class PieceService(
     }
 
     @Transactional(readOnly = true)
-    fun getPieceStatistics(query: GetPieceStatisticsQuery): GetPieceStaticsResult {
+    fun getPieceStatistics(pieceId: Int): GetPieceStaticsResult {
+        val pieceId = PieceId(pieceId)
         // 선생님이 만든 학습지인지 확인
-        val piece = pieceReader.findById(query.pieceId) ?: return GetPieceStaticsResult.Failure(PieceFailureCode.PIECE_NOT_FOUND)
+        val piece = pieceReader.findById(pieceId) ?: return GetPieceStaticsResult.Failure(PieceFailureCode.PIECE_NOT_FOUND)
         if (piece.teacherId != authContext.getCurrentTeacherId()) {
             return GetPieceStaticsResult.Failure(PieceFailureCode.UNAUTHORIZED_ACCESS)
         }
 
         // 학습지에 출제된 모든 assignment 조회
-        val assignments = pieceReader.findPieceAssignments(query.pieceId)
+        val assignments = pieceReader.findPieceAssignments(pieceId)
 
         // 아직 아무에게도 출제하지 않은 학습지
         if (assignments.isEmpty()) {
             return GetPieceStaticsResult.Success(
                 PieceStatistics(
-                    pieceId = query.pieceId,
+                    pieceId = pieceId,
                     title = piece.title,
                 )
             )
@@ -191,7 +194,7 @@ class PieceService(
         }
 
         // 문제별 통계 계산
-        val problemStatistics = pieceReader.getProblemStatisticsByPieceId(query.pieceId)
+        val problemStatistics = pieceReader.getProblemStatisticsByPieceId(pieceId)
 
         // 전체 통계 계산
         val completedAssignments = assignments.count { it.status == AssignmentStatus.COMPLETED }
@@ -202,7 +205,7 @@ class PieceService(
 
         return GetPieceStaticsResult.Success(
                 PieceStatistics(
-                pieceId = query.pieceId,
+                pieceId = pieceId,
                 title = piece.title,
                 totalAssignments = assignments.size,
                 completedAssignments = completedAssignments,

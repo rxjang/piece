@@ -1,10 +1,14 @@
 package com.rxjang.piece.infrastructure.security.principal
 
+import com.rxjang.piece.domain.user.model.Student
 import com.rxjang.piece.domain.user.model.StudentId
 import com.rxjang.piece.domain.user.model.TeacherId
+import com.rxjang.piece.domain.user.model.User
+import com.rxjang.piece.domain.user.model.UserStatus
 import com.rxjang.piece.domain.user.model.UserType
 import com.rxjang.piece.infrastructure.persistance.entity.UserEntity
-import com.rxjang.piece.infrastructure.persistance.entity.UserStatus
+import com.rxjang.piece.infrastructure.persistance.mapper.UserMapper.toStudent
+import com.rxjang.piece.infrastructure.persistance.mapper.UserMapper.toTeacher
 import org.springframework.security.core.GrantedAuthority
 import org.springframework.security.core.authority.SimpleGrantedAuthority
 import org.springframework.security.core.userdetails.UserDetails
@@ -24,6 +28,12 @@ data class CustomUserPrincipal(
     override fun isCredentialsNonExpired(): Boolean = true
     override fun isEnabled(): Boolean = user.status == UserStatus.ACTIVE
 
+    fun getDomainUser(): User {
+        return when (user.userType) {
+            UserType.STUDENT -> user.toStudent()
+            UserType.TEACHER -> user.toTeacher()
+        }
+    }
     fun getUserId(): Int = user.id!!
     fun getUserType(): UserType = user.userType
     fun getName(): String = user.name

@@ -3,7 +3,7 @@ package com.rxjang.piece.infrastructure.security.service
 import com.rxjang.piece.domain.user.model.StudentId
 import com.rxjang.piece.domain.user.model.TeacherId
 import com.rxjang.piece.domain.user.model.UserType
-import com.rxjang.piece.domain.user.service.AuthenticationContext
+import com.rxjang.piece.domain.auth.service.AuthenticationContext
 import com.rxjang.piece.infrastructure.security.principal.CustomUserPrincipal
 import org.springframework.security.core.context.SecurityContextHolder
 import org.springframework.stereotype.Component

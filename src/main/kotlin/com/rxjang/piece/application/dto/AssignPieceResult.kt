@@ -1,6 +1,6 @@
 package com.rxjang.piece.application.dto
 
-import com.rxjang.piece.application.common.FailureCode
+import com.rxjang.piece.application.exception.codes.FailureCode
 import com.rxjang.piece.domain.piece.model.PieceAssignment
 
 sealed class AssignPieceResult {

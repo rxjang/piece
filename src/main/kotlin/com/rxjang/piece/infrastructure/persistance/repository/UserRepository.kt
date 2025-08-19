@@ -1,7 +1,7 @@
 package com.rxjang.piece.infrastructure.persistance.repository
 
+import com.rxjang.piece.domain.user.model.UserStatus
 import com.rxjang.piece.infrastructure.persistance.entity.UserEntity
-import com.rxjang.piece.infrastructure.persistance.entity.UserStatus
 import com.rxjang.piece.domain.user.model.UserType
 import org.springframework.data.jpa.repository.JpaRepository
 

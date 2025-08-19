@@ -1,6 +1,5 @@
 package com.rxjang.piece.domain.user.model
 
-import com.rxjang.piece.infrastructure.persistance.entity.UserStatus
 import java.time.LocalDateTime
 
 data class Teacher(

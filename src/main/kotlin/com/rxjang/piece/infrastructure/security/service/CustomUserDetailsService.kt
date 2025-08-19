@@ -1,9 +1,9 @@
 package com.rxjang.piece.infrastructure.security.service
 
-import com.rxjang.piece.application.common.UserFailureCode
+import com.rxjang.piece.application.exception.codes.UserFailureCode
 import com.rxjang.piece.infrastructure.persistance.repository.UserRepository
 import com.rxjang.piece.infrastructure.security.principal.CustomUserPrincipal
-import com.rxjang.piece.presentation.exception.BusinessException
+import com.rxjang.piece.application.exception.BusinessException
 import org.springframework.security.core.userdetails.UserDetails
 import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.stereotype.Service

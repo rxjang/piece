@@ -1,8 +1,9 @@
 package com.rxjang.piece.presentation.exception
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.rxjang.piece.application.common.AuthFailureCode
-import com.rxjang.piece.application.common.UserFailureCode
+import com.rxjang.piece.application.exception.codes.AuthFailureCode
+import com.rxjang.piece.application.exception.BusinessException
+import com.rxjang.piece.application.exception.codes.UserFailureCode
 import io.github.oshai.kotlinlogging.KotlinLogging
 import io.jsonwebtoken.JwtException
 import jakarta.validation.ValidationException

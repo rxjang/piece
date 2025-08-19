@@ -1,5 +1,6 @@
 package com.rxjang.piece.infrastructure.persistance.entity
 
+import com.rxjang.piece.domain.user.model.UserStatus
 import com.rxjang.piece.domain.user.model.UserType
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
@@ -24,7 +25,6 @@ class UserEntity(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Int? = null
-        protected set
 
     @Column(unique = true, nullable = false)
     var username: String = username
@@ -56,8 +56,4 @@ class UserEntity(
     @Column(name = "updated_at", nullable = false)
     var updatedAt: LocalDateTime = LocalDateTime.now()
         protected set
-}
-
-enum class UserStatus {
-    ACTIVE, INACTIVE
 }

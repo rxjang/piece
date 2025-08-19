@@ -3,10 +3,10 @@ package com.rxjang.piece.presentation.problem
 import com.rxjang.piece.application.service.ProblemService
 import com.rxjang.piece.domain.problem.query.SearchProblemQuery
 import com.rxjang.piece.domain.problem.model.ProblemLevel
-import com.rxjang.piece.infrastructure.security.config.SecurityConstants.TEACHER_ROLE
-import com.rxjang.piece.presentation.problem.dto.request.ProblemRequestType
-import com.rxjang.piece.presentation.problem.converter.ProblemConverter.toResponse
-import com.rxjang.piece.presentation.problem.dto.response.SearchProblemResponse
+import com.rxjang.piece.presentation.security.SecurityConstants.TEACHER_ROLE
+import com.rxjang.piece.application.dto.request.ProblemRequestType
+import com.rxjang.piece.application.dto.converter.ProblemConverter.toResponse
+import com.rxjang.piece.application.dto.response.SearchProblemResponse
 import io.github.oshai.kotlinlogging.KotlinLogging
 import jakarta.validation.constraints.Min
 import jakarta.validation.constraints.NotEmpty

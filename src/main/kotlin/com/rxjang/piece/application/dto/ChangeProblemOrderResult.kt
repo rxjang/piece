@@ -1,6 +1,6 @@
 package com.rxjang.piece.application.dto
 
-import com.rxjang.piece.application.common.PieceFailureCode
+import com.rxjang.piece.application.exception.codes.PieceFailureCode
 import com.rxjang.piece.domain.piece.model.Piece
 
 sealed class ChangeProblemOrderResult
