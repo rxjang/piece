@@ -18,7 +18,7 @@ object PieceMapper {
             title = this.title,
             teacherId = TeacherId(this.userId),
             problemIds = if (withProblems) {
-                this.problems.map { ProblemId(it.problemId) }
+                this.problems.map { ProblemId(it.id.problemId) }
             } else emptyList()
         )
     }

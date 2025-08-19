@@ -10,7 +10,7 @@ interface PieceRepository: JpaRepository<PieceEntity, Int>, PieceRepositoryCusto
     @Query("""
         SELECT p 
         FROM PieceEntity p 
-        JOIN FETCH PieceProblemEntity pp on p.id = pp.pieceId
+        JOIN FETCH PieceProblemEntity pp on p.id = pp.id.pieceId
         WHERE p.id = :id
     """)
     fun findByIdWithProblems(id: Int): PieceEntity?

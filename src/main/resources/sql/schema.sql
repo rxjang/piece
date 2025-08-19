@@ -37,13 +37,12 @@ CREATE TABLE IF NOT EXISTS piece (
 );
 
 -- piece_problem 테이블 생성
--- TODO piece_id & problem_id 로 pk 사용 고려
 CREATE TABLE IF NOT EXISTS piece_problem (
-   id INT AUTO_INCREMENT PRIMARY KEY,
    piece_id INT NOT NULL,
    problem_id INT NOT NULL,
    problem_order INT NOT NULL,
-   created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+   created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+   CONSTRAINT pk_piece_problem PRIMARY KEY (piece_id, problem_id)
 );
 
 -- piece_assignment 테이블 생성

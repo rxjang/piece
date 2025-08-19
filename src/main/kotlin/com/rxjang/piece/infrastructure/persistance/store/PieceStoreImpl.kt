@@ -62,12 +62,12 @@ class PieceStoreImpl(
             problemIds= command.problemOrders.map { it.problemId.value })
         // 순서 변경
         val changed = command.problemOrders.map {
-            val target = pieceProblems.first { pieceProblem -> pieceProblem.problemId == it.problemId.value }
+            val target = pieceProblems.first { pieceProblem -> pieceProblem.id.problemId == it.problemId.value }
             target.changeOrder(it.order)
         }
         // 저장
         val updated = pieceProblemRepository.saveAll(changed)
-        return updated.sortedBy { it.order }.map { ProblemId(it.problemId) }
+        return updated.sortedBy { it.order }.map { ProblemId(it.id.problemId) }
     }
 
     override fun assignToStudent(command: AssignPieceCommand): List<PieceAssignment> {
