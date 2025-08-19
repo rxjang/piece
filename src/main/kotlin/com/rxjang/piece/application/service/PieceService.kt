@@ -199,6 +199,7 @@ class PieceService(
         // 전체 통계 계산
         val completedAssignments = assignments.count { it.status == AssignmentStatus.COMPLETED }
         val averageScore = studentStatistics
+            .filter { it.status == AssignmentStatus.COMPLETED }
             .map { it.correctRate }
             .takeIf { it.isNotEmpty() }
             ?.average() ?: 0.0

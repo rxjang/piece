@@ -66,3 +66,8 @@ CREATE TABLE IF NOT EXISTS problem_scoring (
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     CONSTRAINT pk_problem_scoring PRIMARY KEY (piece_assignment_id, problem_id)
 );
+
+-- 학습지 통계 조회 성능 최적화를 위한 인덱스
+-- problem_scoring 테이블을 piece_assignment_id로 필터링할 때 IN 절과 LEFT JOIN 조건에서 Full Table Scan을 방지
+CREATE INDEX idx_problem_scoring_assignment_id
+    ON problem_scoring(piece_assignment_id);

@@ -1,11 +1,10 @@
-package com.rxjang.piece.application
+package com.rxjang.piece.domain.problem.service
 
 import com.rxjang.piece.domain.problem.dto.ProblemCountPerLevel
-import com.rxjang.piece.domain.problem.service.ProblemLevelCountCalculator
-import com.rxjang.piece.domain.problem.query.SearchProblemQuery
 import com.rxjang.piece.domain.problem.model.ProblemLevel
 import com.rxjang.piece.domain.problem.model.ProblemType
-import org.assertj.core.api.Assertions.assertThat
+import com.rxjang.piece.domain.problem.query.SearchProblemQuery
+import org.assertj.core.api.Assertions
 import kotlin.test.Test
 
 class ProblemLevelCountCalculatorTest {
@@ -33,10 +32,10 @@ class ProblemLevelCountCalculatorTest {
         val result = problemLevelCountCalculator.calculateAdaptedCounts(query, available)
 
         // Then
-        assertThat(result.lowCount).isEqualTo(2)    // 10 * 20% = 2
-        assertThat(result.mediumCount).isEqualTo(3) // 10 * 30% = 3
-        assertThat(result.highCount).isEqualTo(5)   // 10 * 50% = 5
-        assertThat(result.total).isEqualTo(10)
+        Assertions.assertThat(result.lowCount).isEqualTo(2)    // 10 * 20% = 2
+        Assertions.assertThat(result.mediumCount).isEqualTo(3) // 10 * 30% = 3
+        Assertions.assertThat(result.highCount).isEqualTo(5)   // 10 * 50% = 5
+        Assertions.assertThat(result.total).isEqualTo(10)
     }
 
     @Test
@@ -45,7 +44,7 @@ class ProblemLevelCountCalculatorTest {
         val query = SearchProblemQuery(
             requestCount = 20,
             unitCodes = listOf("uc1521"),
-            problemTypes =  listOf(ProblemType.SUBJECTIVE),
+            problemTypes = listOf(ProblemType.SUBJECTIVE),
             level = ProblemLevel.MEDIUM
         )
 
@@ -59,10 +58,10 @@ class ProblemLevelCountCalculatorTest {
         val result = problemLevelCountCalculator.calculateAdaptedCounts(query, available)
 
         // Then
-        assertThat(result.lowCount).isEqualTo(5)    // 20 * 25% = 5
-        assertThat(result.mediumCount).isEqualTo(10) // 20 * 50% = 10
-        assertThat(result.highCount).isEqualTo(5)   // 20 * 25% = 5
-        assertThat(result.total).isEqualTo(20)
+        Assertions.assertThat(result.lowCount).isEqualTo(5)    // 20 * 25% = 5
+        Assertions.assertThat(result.mediumCount).isEqualTo(10) // 20 * 50% = 10
+        Assertions.assertThat(result.highCount).isEqualTo(5)   // 20 * 25% = 5
+        Assertions.assertThat(result.total).isEqualTo(20)
     }
 
     @Test
@@ -71,7 +70,7 @@ class ProblemLevelCountCalculatorTest {
         val query = SearchProblemQuery(
             requestCount = 30,
             unitCodes = listOf("uc1526"),
-            problemTypes =  listOf(ProblemType.SUBJECTIVE),
+            problemTypes = listOf(ProblemType.SUBJECTIVE),
             level = ProblemLevel.LOW  // 하: 하50%, 중30%, 상20%
         )
 
@@ -85,10 +84,10 @@ class ProblemLevelCountCalculatorTest {
         val result = problemLevelCountCalculator.calculateAdaptedCounts(query, available)
 
         // Then
-        assertThat(result.lowCount).isEqualTo(15)   // 30 * 50% = 15
-        assertThat(result.mediumCount).isEqualTo(9) // 30 * 30% = 9
-        assertThat(result.highCount).isEqualTo(6)   // 30 * 20% = 6
-        assertThat(result.total).isEqualTo(30)
+        Assertions.assertThat(result.lowCount).isEqualTo(15)   // 30 * 50% = 15
+        Assertions.assertThat(result.mediumCount).isEqualTo(9) // 30 * 30% = 9
+        Assertions.assertThat(result.highCount).isEqualTo(6)   // 30 * 20% = 6
+        Assertions.assertThat(result.total).isEqualTo(30)
     }
 
     // ** 문제가 충분하지 않은 경우 */
@@ -99,7 +98,7 @@ class ProblemLevelCountCalculatorTest {
         val query = SearchProblemQuery(
             requestCount = 10,
             unitCodes = listOf("uc1537"),
-            problemTypes =  listOf(ProblemType.SUBJECTIVE),
+            problemTypes = listOf(ProblemType.SUBJECTIVE),
             level = ProblemLevel.HIGH
         )
 
@@ -113,10 +112,10 @@ class ProblemLevelCountCalculatorTest {
         val result = problemLevelCountCalculator.calculateAdaptedCounts(query, available)
 
         // Then
-        assertThat(result.lowCount).isEqualTo(2)
-        assertThat(result.mediumCount).isEqualTo(6)
-        assertThat(result.highCount).isEqualTo(2)
-        assertThat(result.total).isEqualTo(10)
+        Assertions.assertThat(result.lowCount).isEqualTo(2)
+        Assertions.assertThat(result.mediumCount).isEqualTo(6)
+        Assertions.assertThat(result.highCount).isEqualTo(2)
+        Assertions.assertThat(result.total).isEqualTo(10)
     }
 
     @Test
@@ -125,7 +124,7 @@ class ProblemLevelCountCalculatorTest {
         val query = SearchProblemQuery(
             requestCount = 20,
             unitCodes = listOf("uc1539"),
-            problemTypes =  listOf(ProblemType.SUBJECTIVE),
+            problemTypes = listOf(ProblemType.SUBJECTIVE),
             level = ProblemLevel.MEDIUM
         )
 
@@ -139,10 +138,10 @@ class ProblemLevelCountCalculatorTest {
         val result = problemLevelCountCalculator.calculateAdaptedCounts(query, available)
 
         // Then
-        assertThat(result.lowCount).isGreaterThan(5)
-        assertThat(result.mediumCount).isEqualTo(3)
-        assertThat(result.highCount).isGreaterThan(5)
-        assertThat(result.total).isEqualTo(20)
+        Assertions.assertThat(result.lowCount).isGreaterThan(5)
+        Assertions.assertThat(result.mediumCount).isEqualTo(3)
+        Assertions.assertThat(result.highCount).isGreaterThan(5)
+        Assertions.assertThat(result.total).isEqualTo(20)
     }
 
     @Test
@@ -151,7 +150,7 @@ class ProblemLevelCountCalculatorTest {
         val query = SearchProblemQuery(
             requestCount = 10,
             unitCodes = listOf("uc1540"),
-            problemTypes =  listOf(ProblemType.SUBJECTIVE),
+            problemTypes = listOf(ProblemType.SUBJECTIVE),
             level = ProblemLevel.LOW
         )
 
@@ -165,10 +164,10 @@ class ProblemLevelCountCalculatorTest {
         val result = problemLevelCountCalculator.calculateAdaptedCounts(query, available)
 
         // Then
-        assertThat(result.lowCount).isEqualTo(1)
-        assertThat(result.mediumCount).isEqualTo(7)
-        assertThat(result.highCount).isEqualTo(2)
-        assertThat(result.total).isEqualTo(10)
+        Assertions.assertThat(result.lowCount).isEqualTo(1)
+        Assertions.assertThat(result.mediumCount).isEqualTo(7)
+        Assertions.assertThat(result.highCount).isEqualTo(2)
+        Assertions.assertThat(result.total).isEqualTo(10)
     }
 
     //** 엣지 케이스 */
@@ -179,7 +178,7 @@ class ProblemLevelCountCalculatorTest {
         val query = SearchProblemQuery(
             requestCount = 100,
             unitCodes = listOf("uc1548"),
-            problemTypes =  listOf(ProblemType.SUBJECTIVE),
+            problemTypes = listOf(ProblemType.SUBJECTIVE),
             level = ProblemLevel.HIGH
         )
 
@@ -193,10 +192,10 @@ class ProblemLevelCountCalculatorTest {
         val result = problemLevelCountCalculator.calculateAdaptedCounts(query, available)
 
         // Then
-        assertThat(result.total).isEqualTo(18)
-        assertThat(result.lowCount).isEqualTo(5)
-        assertThat(result.mediumCount).isEqualTo(10)
-        assertThat(result.highCount).isEqualTo(3)
+        Assertions.assertThat(result.total).isEqualTo(18)
+        Assertions.assertThat(result.lowCount).isEqualTo(5)
+        Assertions.assertThat(result.mediumCount).isEqualTo(10)
+        Assertions.assertThat(result.highCount).isEqualTo(3)
     }
 
     @Test
@@ -205,7 +204,7 @@ class ProblemLevelCountCalculatorTest {
         val query = SearchProblemQuery(
             requestCount = 100,
             unitCodes = listOf("uc1570"),
-            problemTypes =  listOf(ProblemType.SUBJECTIVE),
+            problemTypes = listOf(ProblemType.SUBJECTIVE),
             level = ProblemLevel.HIGH
         )
 
@@ -219,10 +218,10 @@ class ProblemLevelCountCalculatorTest {
         val result = problemLevelCountCalculator.calculateAdaptedCounts(query, available)
 
         // Then
-        assertThat(result.total).isEqualTo(16)
-        assertThat(result.lowCount).isEqualTo(5)
-        assertThat(result.mediumCount).isEqualTo(8)
-        assertThat(result.highCount).isEqualTo(3)
+        Assertions.assertThat(result.total).isEqualTo(16)
+        Assertions.assertThat(result.lowCount).isEqualTo(5)
+        Assertions.assertThat(result.mediumCount).isEqualTo(8)
+        Assertions.assertThat(result.highCount).isEqualTo(3)
     }
 
     @Test
@@ -231,7 +230,7 @@ class ProblemLevelCountCalculatorTest {
         val query = SearchProblemQuery(
             requestCount = 10,
             unitCodes = listOf("uc1564"),
-            problemTypes =  listOf(ProblemType.SUBJECTIVE),
+            problemTypes = listOf(ProblemType.SUBJECTIVE),
             level = ProblemLevel.HIGH
         )
 
@@ -245,10 +244,10 @@ class ProblemLevelCountCalculatorTest {
         val result = problemLevelCountCalculator.calculateAdaptedCounts(query, available)
 
         // Then
-        assertThat(result.total).isEqualTo(10)
-        assertThat(result.highCount).isEqualTo(0)
-        assertThat(result.lowCount + result.mediumCount).isEqualTo(10)
-        assertThat(result.mediumCount).isGreaterThan(result.lowCount)
+        Assertions.assertThat(result.total).isEqualTo(10)
+        Assertions.assertThat(result.highCount).isEqualTo(0)
+        Assertions.assertThat(result.lowCount + result.mediumCount).isEqualTo(10)
+        Assertions.assertThat(result.mediumCount).isGreaterThan(result.lowCount)
     }
 
     @Test
@@ -257,7 +256,7 @@ class ProblemLevelCountCalculatorTest {
         val query = SearchProblemQuery(
             requestCount = 17,
             unitCodes = listOf("uc1571"),
-            problemTypes =  listOf(ProblemType.SUBJECTIVE),
+            problemTypes = listOf(ProblemType.SUBJECTIVE),
             level = ProblemLevel.MEDIUM
         )
 
@@ -271,10 +270,10 @@ class ProblemLevelCountCalculatorTest {
         val result = problemLevelCountCalculator.calculateAdaptedCounts(query, available)
 
         // Then
-        assertThat(result.total).isEqualTo(17)
-        assertThat(result.lowCount).isEqualTo(4)
-        assertThat(result.mediumCount).isEqualTo(9)
-        assertThat(result.highCount).isEqualTo(4)
+        Assertions.assertThat(result.total).isEqualTo(17)
+        Assertions.assertThat(result.lowCount).isEqualTo(4)
+        Assertions.assertThat(result.mediumCount).isEqualTo(9)
+        Assertions.assertThat(result.highCount).isEqualTo(4)
     }
 
 
@@ -284,7 +283,7 @@ class ProblemLevelCountCalculatorTest {
         val query = SearchProblemQuery(
             requestCount = 10,
             unitCodes = listOf("uc1568"),
-            problemTypes =  listOf(ProblemType.SUBJECTIVE),
+            problemTypes = listOf(ProblemType.SUBJECTIVE),
             level = ProblemLevel.MEDIUM
         )
 
@@ -298,10 +297,10 @@ class ProblemLevelCountCalculatorTest {
         val result = problemLevelCountCalculator.calculateAdaptedCounts(query, available)
 
         // Then
-        assertThat(result.total).isEqualTo(10)
-        assertThat(result.lowCount).isEqualTo(0)
-        assertThat(result.mediumCount).isEqualTo(10)
-        assertThat(result.highCount).isEqualTo(0)
+        Assertions.assertThat(result.total).isEqualTo(10)
+        Assertions.assertThat(result.lowCount).isEqualTo(0)
+        Assertions.assertThat(result.mediumCount).isEqualTo(10)
+        Assertions.assertThat(result.highCount).isEqualTo(0)
     }
 
     @Test
@@ -310,7 +309,7 @@ class ProblemLevelCountCalculatorTest {
         val query = SearchProblemQuery(
             requestCount = 10,
             unitCodes = listOf("uc9999"), // 존재하지 않는 unit
-            problemTypes =  listOf(ProblemType.SUBJECTIVE),
+            problemTypes = listOf(ProblemType.SUBJECTIVE),
             level = ProblemLevel.HIGH
         )
 
@@ -324,10 +323,10 @@ class ProblemLevelCountCalculatorTest {
         val result = problemLevelCountCalculator.calculateAdaptedCounts(query, available)
 
         // Then
-        assertThat(result.total).isEqualTo(0)
-        assertThat(result.lowCount).isEqualTo(0)
-        assertThat(result.mediumCount).isEqualTo(0)
-        assertThat(result.highCount).isEqualTo(0)
+        Assertions.assertThat(result.total).isEqualTo(0)
+        Assertions.assertThat(result.lowCount).isEqualTo(0)
+        Assertions.assertThat(result.mediumCount).isEqualTo(0)
+        Assertions.assertThat(result.highCount).isEqualTo(0)
     }
 
     @Test
@@ -336,7 +335,7 @@ class ProblemLevelCountCalculatorTest {
         val query = SearchProblemQuery(
             requestCount = 1,
             unitCodes = listOf("uc1523"),
-            problemTypes =  listOf(ProblemType.SUBJECTIVE),
+            problemTypes = listOf(ProblemType.SUBJECTIVE),
             level = ProblemLevel.HIGH
         )
 
@@ -350,9 +349,9 @@ class ProblemLevelCountCalculatorTest {
         val result = problemLevelCountCalculator.calculateAdaptedCounts(query, available)
 
         // Then
-        assertThat(result.total).isEqualTo(1)
-        assertThat(result.highCount).isEqualTo(1)
-        assertThat(result.lowCount + result.mediumCount).isEqualTo(0)
+        Assertions.assertThat(result.total).isEqualTo(1)
+        Assertions.assertThat(result.highCount).isEqualTo(1)
+        Assertions.assertThat(result.lowCount + result.mediumCount).isEqualTo(0)
     }
 
 }
