@@ -2,11 +2,9 @@ package com.rxjang.piece.presentation.piece
 
 import com.rxjang.piece.application.exception.codes.PieceFailureCode
 import com.rxjang.piece.application.dto.AssignPieceResult
+import com.rxjang.piece.application.dto.ChangeProblemOrderResult
+import com.rxjang.piece.application.dto.CreatePieceResult
 import com.rxjang.piece.application.service.PieceService
-import com.rxjang.piece.application.dto.ChangeProblemOrderFailure
-import com.rxjang.piece.application.dto.ChangeProblemOrderSuccess
-import com.rxjang.piece.application.dto.CreatePieceFailure
-import com.rxjang.piece.application.dto.CreatePieceSuccess
 import com.rxjang.piece.application.dto.GetPieceStaticsResult
 import com.rxjang.piece.application.dto.ScorePieceResult
 import com.rxjang.piece.application.facade.PieceFacade
@@ -51,13 +49,13 @@ class PieceController(
     fun createPiece(@RequestBody @Valid request: CreatePieceRequest): ResponseEntity<CreatePieceResponse> {
         val result = pieceService.createPiece(request)
         return when(result) {
-            is CreatePieceSuccess ->
+            is CreatePieceResult.Success ->
                 ResponseEntity
                     .ok()
                     .body(
                         CreatePieceResponse(result.piece.id.value)
                     )
-            is CreatePieceFailure -> throw BusinessException(result.failureCode)
+            is CreatePieceResult.Failure -> throw BusinessException(result.failureCode)
         }
     }
 
@@ -69,10 +67,10 @@ class PieceController(
     ): ResponseEntity<ChangeProblemOrderInPieceResponse> {
         val result = pieceService.changeProblemOrder(pieceId, request)
         return when (result) {
-            is ChangeProblemOrderSuccess ->
+            is ChangeProblemOrderResult.Success ->
                 ResponseEntity.ok()
                     .body(result.piece.toChangeOrderResponse())
-            is ChangeProblemOrderFailure -> throw BusinessException(result.failureCode)
+            is ChangeProblemOrderResult.Failure -> throw BusinessException(result.failureCode)
         }
     }
 
